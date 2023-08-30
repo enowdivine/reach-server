@@ -2,8 +2,8 @@ import express, { Request, Response } from "express";
 import dotenv from "dotenv";
 import bodyParser = require("body-parser");
 import dbConnect from "./config/db";
-const http = require("http");
-const cors = require("cors");
+import http from "http";
+import cors from "cors";
 
 const corsOptions = {
   origin: "*",
