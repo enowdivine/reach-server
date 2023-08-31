@@ -27,6 +27,7 @@ class UserController {
           const token: string = jwt.sign(
             {
               id: response._id,
+              username: response.username,
               email: response.email,
             },
             process.env.JWT_SECRET as string
@@ -69,6 +70,7 @@ class UserController {
               const token: string = jwt.sign(
                 {
                   id: user._id,
+                  username: user.username,
                   email: user.email,
                 },
                 process.env.JWT_SECRET as string
@@ -207,6 +209,86 @@ class UserController {
     }
   }
 
+  async forgotPassword(req: Request, res: Response) {
+    try {
+      const user = await User.findOne({ email: req.body.email });
+      if (user) {
+        const resetToken: string = jwt.sign(
+          {
+            userId: user._id,
+            email: user.email,
+          },
+          process.env.JWT_SECRET as string,
+          {
+            expiresIn: "1h",
+          }
+        );
+        const url = `${process.env.FRONTEND_URL}/new-password/${resetToken}`;
+        sendEmail({
+          to: user.email as string,
+          subject: "Deonicode: Reset Password",
+          message: welcomeEmail(user.username as string),
+        });
+        return res.status(200).json({
+          message: "success, check your inbox",
+        });
+      } else {
+        return res.status(500).json({
+          message: "email does not exist",
+        });
+      }
+    } catch (error) {
+      console.error("error in forgot password", error);
+    }
+  }
+
+  async newPassword(req: Request, res: Response) {
+    try {
+      let user = await User.findOne({ _id: req.params.id });
+      if (user) {
+        const { newPassword } = req.body;
+        bcrypt.hash(newPassword, 10, async (error: any, hash: any) => {
+          if (error) {
+            return res.status(500).json({
+              error: error,
+            });
+          }
+          const passwordUpdate = {
+            password: hash,
+          };
+          user = _.extend(user, passwordUpdate);
+          user
+            .save()
+            .then((result: any) => {
+              const token: string = jwt.sign(
+                {
+                  id: result._id,
+                  username: result.username,
+                  email: result.email,
+                },
+                process.env.JWT_SECRET as string
+              );
+              res.status(200).json({
+                message: "Password Updated",
+                token: token,
+              });
+            })
+            .catch((error: any) => {
+              res.status(500).json({
+                error: error,
+              });
+            });
+        });
+      } else {
+        return res.status(500).json({
+          message: "email does not exist",
+        });
+      }
+    } catch (error) {
+      console.error("error in new password", error);
+    }
+  }
+
   async addToWishlist(req: Request, res: Response) {
     try {
       const user = await User.findOne({ _id: req.params.id });
@@ -340,6 +422,23 @@ class UserController {
       }
     } catch (error) {
       console.error("error fetching cart", error);
+    }
+  }
+
+  async deleteUser(req: Request, res: Response) {
+    try {
+      const response = await User.deleteOne({ _id: req.params.id });
+      if (response.deletedCount > 0) {
+        res.status(200).json({
+          message: "user deleted successfully",
+        });
+      } else {
+        res.status(404).json({
+          message: "user not found",
+        });
+      }
+    } catch (error) {
+      console.error("error fetching user", error);
     }
   }
 }
