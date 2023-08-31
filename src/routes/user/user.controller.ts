@@ -117,9 +117,18 @@ class UserController {
       }
     );
     if (user.acknowledged) {
+      const newuser = await User.findOne({ _id: req.params.id });
+      const token: string = jwt.sign(
+        {
+          id: newuser?._id,
+          username: newuser?.username,
+          email: newuser?.email,
+        },
+        process.env.JWT_SECRET as string
+      );
       res.status(200).json({
         message: "update successful",
-        user,
+        token: token,
       });
     } else {
       res.status(404).json({
@@ -223,11 +232,11 @@ class UserController {
             expiresIn: "1h",
           }
         );
-        const url = `${process.env.FRONTEND_URL}/new-password/${resetToken}`;
+        const url = `<a href="${process.env.FRONTEND_URL}/new-password/${resetToken}">Click here</a>`;
         sendEmail({
           to: user.email as string,
           subject: "Deonicode: Reset Password",
-          message: welcomeEmail(user.username as string),
+          message: welcomeEmail(url),
         });
         return res.status(200).json({
           message: "success, check your inbox",
