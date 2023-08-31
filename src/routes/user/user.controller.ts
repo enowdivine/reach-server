@@ -425,6 +425,26 @@ class UserController {
     }
   }
 
+  async blockUser(req: Request, res: Response) {
+    try {
+      const user = await User.findOne({ _id: req.params.id });
+      if (user) {
+        user.isActive = !user.isActive;
+        await user.save().then(() => {
+          return res.status(200).json({
+            message: "user status updated",
+          });
+        });
+      } else {
+        return res.status(404).json({
+          message: "user not found",
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   async deleteUser(req: Request, res: Response) {
     try {
       const response = await User.deleteOne({ _id: req.params.id });
