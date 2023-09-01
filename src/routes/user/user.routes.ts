@@ -24,6 +24,6 @@ router.put("/remove-item-from-cart/:id", user.removeFromCart);
 router.get("/cart/:id", user.viewCart);
 
 router.delete("/delete-user/:id", user.deleteUser);
-router.put("/deactivate-user/:id", user.blockUser);
+router.put("/deactivate-user/:id", user.updateStatus);
 
 export default router;

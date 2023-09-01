@@ -2,21 +2,21 @@ import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import _ from "lodash";
-import User from "./user.model";
+import Instructor from "./instructor.model";
 import sendEmail from "../../services/email/sendEmail";
 import { welcomeEmail } from "./templates/welcomeEmail";
 
-class UserController {
+class InstructorController {
   async register(req: Request, res: Response) {
     try {
-      const user = await User.findOne({ email: req.body.email });
+      const user = await Instructor.findOne({ email: req.body.email });
       if (user) {
         return res.status(409).json({
           message: "email already exist",
         });
       }
       const hash = await bcrypt.hash(req.body.password, 10);
-      const newUser = new User({
+      const newUser = new Instructor({
         username: req.body.username,
         email: req.body.email,
         password: hash,
@@ -29,6 +29,7 @@ class UserController {
               id: response._id,
               username: response.username,
               email: response.email,
+              role: response.role,
             },
             process.env.JWT_SECRET as string
           );
@@ -55,7 +56,7 @@ class UserController {
 
   async login(req: Request, res: Response) {
     try {
-      const user = await User.findOne({ email: req.body.email });
+      const user = await Instructor.findOne({ email: req.body.email });
       if (user) {
         bcrypt.compare(
           req.body.password,
@@ -72,6 +73,7 @@ class UserController {
                   id: user._id,
                   username: user.username,
                   email: user.email,
+                  role: user.role,
                 },
                 process.env.JWT_SECRET as string
               );
@@ -97,7 +99,7 @@ class UserController {
   }
 
   async update(req: Request, res: Response) {
-    const user = await User.updateOne(
+    const user = await Instructor.updateOne(
       {
         _id: req.params.id,
       },
@@ -109,20 +111,16 @@ class UserController {
           avatar: req.body.avatar,
           country: req.body.country,
         },
-        $push: {
-          purchasedCourses: { purchasedCourses: req.body.purchasedCourses },
-          wishlist: { wishlist: req.body.wishlist },
-          cart: { cart: req.body.cart },
-        },
       }
     );
     if (user.acknowledged) {
-      const newuser = await User.findOne({ _id: req.params.id });
+      const newuser = await Instructor.findOne({ _id: req.params.id });
       const token: string = jwt.sign(
         {
           id: newuser?._id,
           username: newuser?.username,
           email: newuser?.email,
+          role: newuser?.role,
         },
         process.env.JWT_SECRET as string
       );
@@ -138,7 +136,7 @@ class UserController {
   }
 
   async updatePassword(req: Request, res: Response) {
-    let user = await User.findOne({ _id: req.params.id });
+    let user = await Instructor.findOne({ _id: req.params.id });
     if (user) {
       const { currentPassword, newPassword } = req.body;
       bcrypt
@@ -184,43 +182,43 @@ class UserController {
     }
   }
 
-  async user(req: Request, res: Response) {
+  async instructor(req: Request, res: Response) {
     try {
-      const user = await User.findOne({ _id: req.params.id });
+      const user = await Instructor.findOne({ _id: req.params.id });
       if (user) {
         return res.status(200).json({
           user,
         });
       } else {
         return res.status(404).json({
-          message: "user not found",
+          message: "instructor not found",
         });
       }
     } catch (error) {
-      console.error("error fetching user", error);
+      console.error("error fetching instructor", error);
     }
   }
 
-  async users(req: Request, res: Response) {
+  async instructors(req: Request, res: Response) {
     try {
-      const users = await User.find();
+      const users = await Instructor.find();
       if (users) {
         return res.status(200).json({
           users,
         });
       } else {
         return res.status(404).json({
-          message: "no user found",
+          message: "no instructor found",
         });
       }
     } catch (error) {
-      console.error("error fetching users", error);
+      console.error("error fetching instructors", error);
     }
   }
 
   async forgotPassword(req: Request, res: Response) {
     try {
-      const user = await User.findOne({ email: req.body.email });
+      const user = await Instructor.findOne({ email: req.body.email });
       if (user) {
         const resetToken: string = jwt.sign(
           {
@@ -253,7 +251,7 @@ class UserController {
 
   async newPassword(req: Request, res: Response) {
     try {
-      let user = await User.findOne({ _id: req.params.id });
+      let user = await Instructor.findOne({ _id: req.params.id });
       if (user) {
         const { newPassword } = req.body;
         bcrypt.hash(newPassword, 10, async (error: any, hash: any) => {
@@ -298,155 +296,19 @@ class UserController {
     }
   }
 
-  async addToWishlist(req: Request, res: Response) {
-    try {
-      const user = await User.findOne({ _id: req.params.id });
-      if (user) {
-        const itemID = req.body.item._id;
-        const userWishlist = user.wishlist;
-        const temp = userWishlist.filter((item) => item.id === itemID);
-        if (temp.length > 0) {
-          return res.status(400).json({
-            message: "item already exist in wislist",
-          });
-        }
-        user.wishlist.push(req.body.item);
-        user.save().then(() => {
-          return res.status(200).json({
-            message: "item added to wishlist",
-          });
-        });
-      }
-    } catch (error) {
-      console.error("error adding item to wishlist", error);
-    }
-  }
-
-  async viewWishlist(req: Request, res: Response) {
-    try {
-      const user = await User.findOne({ _id: req.params.id });
-      if (user) {
-        const wishlist = user.wishlist;
-        return res.status(200).json({
-          wishlist: wishlist,
-        });
-      } else {
-        return res.status(404).json({
-          message: "user not found",
-        });
-      }
-    } catch (error) {
-      console.error("error fetching wishlist", error);
-    }
-  }
-
-  async removeFromWishlist(req: Request, res: Response) {
-    try {
-      const user = await User.updateOne(
-        { _id: req.params.id },
-        {
-          $pull: {
-            wishlist: {
-              _id: req.body.item._id,
-            },
-          },
-        }
-      );
-      if (user.acknowledged) {
-        return res.status(200).json({
-          message: "item removed from wishlist",
-        });
-      } else {
-        return res.status(404).json({
-          message: "item not found",
-        });
-      }
-    } catch (error) {
-      console.error("error removing item from wishlist", error);
-    }
-  }
-
-  async addToCart(req: Request, res: Response) {
-    try {
-      const user = await User.findOne({ _id: req.params.id });
-      if (user) {
-        const itemID = req.body.item._id;
-        const userCart = user.cart;
-        const temp = userCart.filter((item) => item.id === itemID);
-        if (temp.length > 0) {
-          return res.status(400).json({
-            message: "item already exist in cart",
-          });
-        }
-        user.cart.push(req.body.item);
-        user.save().then(() => {
-          return res.status(200).json({
-            message: "item added to cart",
-          });
-        });
-      }
-    } catch (error) {
-      console.error("error adding item to cart", error);
-    }
-  }
-
-  async removeFromCart(req: Request, res: Response) {
-    try {
-      const user = await User.updateOne(
-        { _id: req.params.id },
-        {
-          $pull: {
-            cart: {
-              _id: req.body.item._id,
-            },
-          },
-        }
-      );
-      if (user.acknowledged) {
-        return res.status(200).json({
-          message: "item removed from cart",
-        });
-      } else {
-        return res.status(404).json({
-          message: "item not found",
-        });
-      }
-    } catch (error) {
-      console.error("error removing item from cart", error);
-    }
-  }
-
-  async viewCart(req: Request, res: Response) {
-    try {
-      const user = await User.findOne({ _id: req.params.id });
-      if (user) {
-        const cart = user.cart;
-        return res.status(200).json({
-          cart: cart,
-        });
-      } else {
-        return res.status(404).json({
-          message: "user not found",
-        });
-      }
-    } catch (error) {
-      console.error("error fetching cart", error);
-    }
-  }
-
   async updateStatus(req: Request, res: Response) {
     try {
-      const user = await User.findOne({ _id: req.params.id });
+      const user = await Instructor.findOne({ _id: req.params.id });
       if (user) {
         user.isActive = !user.isActive;
         await user.save().then(() => {
           return res.status(200).json({
-            message: "user status updated",
+            message: "instructor status updated",
           });
         });
       } else {
         return res.status(404).json({
-          message: "user not found",
+          message: "instructor not found",
         });
       }
     } catch (error) {
@@ -454,22 +316,22 @@ class UserController {
     }
   }
 
-  async deleteUser(req: Request, res: Response) {
+  async deleteInstructor(req: Request, res: Response) {
     try {
-      const response = await User.deleteOne({ _id: req.params.id });
+      const response = await Instructor.deleteOne({ _id: req.params.id });
       if (response.deletedCount > 0) {
         res.status(200).json({
-          message: "user deleted successfully",
+          message: "instructor deleted successfully",
         });
       } else {
         res.status(404).json({
-          message: "user not found",
+          message: "instructor not found",
         });
       }
     } catch (error) {
-      console.error("error fetching user", error);
+      console.error("error fetching instructor", error);
     }
   }
 }
 
-export default UserController;
+export default InstructorController;

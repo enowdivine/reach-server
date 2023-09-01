@@ -19,7 +19,7 @@ export default function (req: Request, res: Response, next: NextFunction) {
           success: false,
           message: "Invalid Token",
         });
-      if (payload.role === "teacher" || "admin") {
+      if (payload.role === "instructor" || "admin") {
         next();
       } else {
         return res.json({
