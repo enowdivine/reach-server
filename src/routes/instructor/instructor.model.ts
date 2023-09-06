@@ -11,6 +11,31 @@ const instructor = new mongoose.Schema(
       required: [true, "instructor email is required"],
       unique: true,
     },
+    phoneNumber: {
+      type: String,
+      required: [true, "phone number is required"],
+      unique: true,
+    },
+    occupation: {
+      type: String,
+      required: [true, "occupation is required"],
+    },
+    educationLevel: {
+      type: String,
+      required: [true, "level of education is required"],
+    },
+    targetSubject: {
+      type: String,
+      required: [true, "subject of specification is required"],
+    },
+    age: {
+      type: Number,
+      required: [true, "age is required"],
+    },
+    resume: {
+      type: Object,
+      required: [true, "resume is required"],
+    },
     password: {
       type: String,
       required: [true, "instructor pasword is required"],
@@ -20,8 +45,8 @@ const instructor = new mongoose.Schema(
       default: "",
     },
     avatar: {
-      type: String,
-      default: "",
+      type: Object,
+      default: null,
     },
     country: {
       type: String,

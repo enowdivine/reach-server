@@ -1,10 +1,11 @@
 import express, { Router } from "express";
 import Instructor from "./instructor.controller";
+import { upload } from "../../middleware/s3/s3";
 
 const router: Router = express.Router();
 const istructor = new Instructor();
 
-router.post("/register", istructor.register);
+router.post("/register", upload.single("resume"), istructor.register);
 router.post("/login", istructor.login);
 router.post("/forgot-password", istructor.forgotPassword);
 

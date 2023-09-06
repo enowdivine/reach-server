@@ -19,6 +19,12 @@ class InstructorController {
       const newUser = new Instructor({
         username: req.body.username,
         email: req.body.email,
+        phoneNumber: req.body.phoneNumber,
+        occupation: req.body.occupation,
+        educationLevel: req.body.educationLevel,
+        targetSubject: req.body.targetSubject,
+        age: req.body.age,
+        resume: req.body.resume,
         password: hash,
       });
       newUser
@@ -107,8 +113,12 @@ class InstructorController {
         $set: {
           username: req.body.username,
           email: req.body.email,
+          phoneNumber: req.body.phoneNumber,
+          occupation: req.body.occupation,
+          educationLevel: req.body.educationLevel,
+          targetSubject: req.body.targetSubject,
+          age: req.body.age,
           bio: req.body.bio,
-          avatar: req.body.avatar,
           country: req.body.country,
         },
       }
