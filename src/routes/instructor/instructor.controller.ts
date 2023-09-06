@@ -9,54 +9,56 @@ import { welcomeEmail } from "./templates/welcomeEmail";
 class InstructorController {
   async register(req: Request, res: Response) {
     try {
-      const user = await Instructor.findOne({ email: req.body.email });
-      if (user) {
-        return res.status(409).json({
-          message: "email already exist",
+      const multerFiles = JSON.parse(JSON.stringify(req.file));
+      if (multerFiles) {
+        const resume = {
+          img: multerFiles?.location,
+          key: multerFiles?.key,
+        };
+        const user = await Instructor.findOne({ email: req.body.email });
+        if (user) {
+          return res.status(409).json({
+            message: "email already exist",
+          });
+        }
+        const hash = await bcrypt.hash(req.body.password, 10);
+        const newUser = new Instructor({
+          username: req.body.username,
+          email: req.body.email,
+          phoneNumber: req.body.phoneNumber,
+          occupation: req.body.occupation,
+          educationLevel: req.body.educationLevel,
+          targetSubject: req.body.targetSubject,
+          age: req.body.age,
+          resume: resume,
+          password: hash,
+        });
+        newUser
+          .save()
+          .then((response) => {
+            sendEmail({
+              to: response.email as string,
+              subject: "Deonicode: Welcome Email",
+              message: welcomeEmail(response.username as string),
+            });
+            res.status(201).json({
+              message: "success",
+            });
+          })
+          .catch((err) => {
+            console.log(err);
+            res.status(500).json({
+              message: "error submitting form",
+              error: err,
+            });
+          });
+      } else {
+        return res.status(500).json({
+          message: "resume upload failed",
         });
       }
-      const hash = await bcrypt.hash(req.body.password, 10);
-      const newUser = new Instructor({
-        username: req.body.username,
-        email: req.body.email,
-        phoneNumber: req.body.phoneNumber,
-        occupation: req.body.occupation,
-        educationLevel: req.body.educationLevel,
-        targetSubject: req.body.targetSubject,
-        age: req.body.age,
-        resume: req.body.resume,
-        password: hash,
-      });
-      newUser
-        .save()
-        .then((response) => {
-          const token: string = jwt.sign(
-            {
-              id: response._id,
-              username: response.username,
-              email: response.email,
-              role: response.role,
-            },
-            process.env.JWT_SECRET as string
-          );
-          sendEmail({
-            to: response.email as string,
-            subject: "Deonicode: Welcome Email",
-            message: welcomeEmail(response.username as string),
-          });
-          res.status(201).json({
-            message: "success",
-            token,
-          });
-        })
-        .catch((err) => {
-          res.status(500).json({
-            message: "error creating user",
-            error: err,
-          });
-        });
     } catch (error) {
-      console.error("error in user registration", error);
+      console.error("error in instructor registration", error);
     }
   }
 
@@ -311,7 +313,8 @@ class InstructorController {
       const user = await Instructor.findOne({ _id: req.params.id });
       if (user) {
         user.isActive = !user.isActive;
-        await user.save().then(() => {
+        await user.save().then((response) => {
+          console.log(response);
           return res.status(200).json({
             message: "instructor status updated",
           });

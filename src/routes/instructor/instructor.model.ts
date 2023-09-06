@@ -9,12 +9,10 @@ const instructor = new mongoose.Schema(
     email: {
       type: String,
       required: [true, "instructor email is required"],
-      unique: true,
     },
     phoneNumber: {
       type: String,
       required: [true, "phone number is required"],
-      unique: true,
     },
     occupation: {
       type: String,
@@ -57,6 +55,10 @@ const instructor = new mongoose.Schema(
       default: "instructor",
     },
     isActive: {
+      type: Boolean,
+      default: false,
+    },
+    isApproved: {
       type: Boolean,
       default: false,
     },

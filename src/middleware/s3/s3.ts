@@ -14,14 +14,6 @@ const s3 = new S3Client({
 });
 const BUCKET = process.env.AWS_BUCKET as string;
 
-// const fileFilter = (req: Request, file: any, cb: Function) => {
-//   if (file.mimetype === "image/png" || file.mimetype === "image/jpeg") {
-//     cb(null, true);
-//   } else {
-//     cb(null, false);
-//   }
-// };
-
 export const upload = multer({
   storage: multerS3({
     s3: s3,
@@ -36,10 +28,6 @@ export const upload = multer({
       cb(null, Date.now().toString() + `${uuid()}${ext}`);
     },
   }),
-  // limits: {
-  //   fileSize: 5 * 1024 * 1024,
-  // },
-  // fileFilter: fileFilter,
 });
 
 // function to delete an image from s3 bucket
