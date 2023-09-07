@@ -9,8 +9,8 @@ router.post("/register", upload.single("resume"), istructor.register);
 router.post("/login", istructor.login);
 router.post("/forgot-password", istructor.forgotPassword);
 
-router.get("/istructor/:id", istructor.instructor);
-router.get("/istructors", istructor.instructors);
+router.get("/instructor/:id", istructor.instructor);
+router.get("/instructors", istructor.instructors);
 
 router.put("/update-user/:id", istructor.update);
 router.put("/update-password/:id", istructor.updatePassword);
