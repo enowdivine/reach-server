@@ -12,7 +12,7 @@ class InstructorController {
       const multerFiles = JSON.parse(JSON.stringify(req.file));
       if (multerFiles) {
         const resume = {
-          img: multerFiles?.location,
+          doc: multerFiles?.location,
           key: multerFiles?.key,
         };
         const user = await Instructor.findOne({ email: req.body.email });
