@@ -109,11 +109,6 @@ class UserController {
           avatar: req.body.avatar,
           country: req.body.country,
         },
-        $push: {
-          purchasedCourses: { purchasedCourses: req.body.purchasedCourses },
-          wishlist: { wishlist: req.body.wishlist },
-          cart: { cart: req.body.cart },
-        },
       }
     );
     if (user.acknowledged) {
