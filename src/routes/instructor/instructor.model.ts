@@ -56,7 +56,7 @@ const instructor = new mongoose.Schema(
     },
     isActive: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     isApproved: {
       type: Boolean,
