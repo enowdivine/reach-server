@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import Admin from "./admin.model";
+import Instructor from "../instructor/instructor.model";
 import bcrypt from "bcrypt";
 import _ from "lodash";
 
@@ -78,9 +79,42 @@ class AdminController {
             });
           }
         );
+      } else if (admin === null) {
+        const user = await Instructor.findOne({ email: req.body.email });
+        if (user) {
+          bcrypt.compare(
+            req.body.password,
+            user.password!,
+            (err: any, result: any) => {
+              if (err) {
+                return res.status(401).json({
+                  message: "authentication failed",
+                });
+              }
+              if (result) {
+                const token: string = jwt.sign(
+                  {
+                    id: user._id,
+                    username: user.username,
+                    email: user.email,
+                    role: user.role,
+                  },
+                  process.env.JWT_SECRET as string
+                );
+                return res.status(200).json({
+                  message: "login successful",
+                  token: token,
+                });
+              }
+              res.status(401).json({
+                message: "authentication failed",
+              });
+            }
+          );
+        }
       } else {
         return res.status(401).json({
-          message: "Authentication Failed",
+          message: "Authentication Faileds",
         });
       }
     } catch (error) {
