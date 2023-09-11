@@ -312,9 +312,8 @@ class InstructorController {
     try {
       const user = await Instructor.findOne({ _id: req.params.id });
       if (user) {
-        user.isActive = !user.isActive;
+        user.status = req.body.status;
         await user.save().then((response) => {
-          console.log(response);
           return res.status(200).json({
             message: "instructor status updated",
           });

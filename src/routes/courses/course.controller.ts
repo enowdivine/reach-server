@@ -1,39 +1,46 @@
 import { Request, Response } from "express";
 import Course from "./course.model";
+import { deleteObject } from "../../middleware/s3/s3";
 
 class CourseController {
   async create(req: Request, res: Response) {
     try {
-      const course = new Course({
-        instructorId: req.body.instructorId,
-        title: req.body.title,
-        introVideoUrl: req.body.introVideoUrl,
-        desc: req.body.desc,
-        category: req.body.category,
-        price: req.body.price,
-        discount: req.body.discount,
-        courseLevel: req.body.courseLevel,
-        numberOfChapters: req.body.numberOfChapters,
-        numberOfLessons: req.body.numberOfLessons,
-        duration: req.body.duration,
-        language: req.body.language,
-        $push: {
-          tags: { tags: req.body.tags },
-        },
-      });
-      await course
-        .save()
-        .then(() => {
-          res.status(201).json({
-            message: "course created",
-          });
-        })
-        .catch((err) => {
-          res.status(500).json({
-            message: "error creating course",
-            error: err,
-          });
+      const multerFiles = JSON.parse(JSON.stringify(req.file));
+      if (multerFiles) {
+        const image = {
+          doc: multerFiles?.location,
+          key: multerFiles?.key,
+        };
+        const course = new Course({
+          instructorId: req.body.instructorId,
+          title: req.body.title,
+          desc: req.body.desc,
+          category: req.body.category,
+          coverImage: image,
+          price: req.body.price,
+          courseLevel: req.body.courseLevel,
+          duration: req.body.duration,
+          language: req.body.language,
+          tags: req.body.tags,
         });
+        await course
+          .save()
+          .then(() => {
+            res.status(201).json({
+              message: "course created",
+            });
+          })
+          .catch((err) => {
+            res.status(500).json({
+              message: "error creating course",
+              error: err,
+            });
+          });
+      } else {
+        return res.status(500).json({
+          message: "Cover image upload failed",
+        });
+      }
     } catch (error) {
       console.error("error creating course", error);
     }
@@ -110,37 +117,82 @@ class CourseController {
   }
 
   async update(req: Request, res: Response) {
-    const course = await Course.updateOne(
-      {
-        _id: req.params.id,
-      },
-      {
-        $set: {
-          title: req.body.title,
-          introVideoUrl: req.body.introVideoUrl,
-          desc: req.body.desc,
-          category: req.body.category,
-          price: req.body.price,
-          discount: req.body.discount,
-          courseLevel: req.body.courseLevel,
-          numberOfChapters: req.body.numberOfChapters,
-          numberOfLessons: req.body.numberOfLessons,
-          duration: req.body.duration,
-          language: req.body.language,
-        },
-        $push: {
-          tags: { tags: req.body.tags },
-        },
+    try {
+      const multerFiles = JSON.parse(JSON.stringify(req.file));
+      if (multerFiles) {
+        const image = {
+          doc: multerFiles?.location,
+          key: multerFiles?.key,
+        };
+        const course = await Course.findOne({ _id: req.params.id });
+        if (course) {
+          const imageKey = course.coverImage.key;
+          const response = await deleteObject(imageKey);
+          console.log("delete response", response);
+        }
+        const updatedCourse = await Course.updateOne(
+          {
+            _id: req.params.id,
+          },
+          {
+            $set: {
+              title: req.body.title,
+              introVideoUrl: req.body.introVideoUrl,
+              desc: req.body.desc,
+              category: req.body.category,
+              price: req.body.price,
+              coverImage: image,
+              courseLevel: req.body.courseLevel,
+              duration: req.body.duration,
+              language: req.body.language,
+            },
+            $push: {
+              tags: { tags: req.body.tags },
+            },
+          }
+        );
+        if (updatedCourse.acknowledged) {
+          res.status(200).json({
+            message: "update successful",
+          });
+        } else {
+          res.status(404).json({
+            message: "course not found",
+          });
+        }
+      } else {
+        const course = await Course.updateOne(
+          {
+            _id: req.params.id,
+          },
+          {
+            $set: {
+              title: req.body.title,
+              introVideoUrl: req.body.introVideoUrl,
+              desc: req.body.desc,
+              category: req.body.category,
+              price: req.body.price,
+              courseLevel: req.body.courseLevel,
+              duration: req.body.duration,
+              language: req.body.language,
+            },
+            $push: {
+              tags: { tags: req.body.tags },
+            },
+          }
+        );
+        if (course.acknowledged) {
+          res.status(200).json({
+            message: "update successful",
+          });
+        } else {
+          res.status(404).json({
+            message: "course not found",
+          });
+        }
       }
-    );
-    if (course.acknowledged) {
-      res.status(200).json({
-        message: "update successful",
-      });
-    } else {
-      res.status(404).json({
-        message: "course not found",
-      });
+    } catch (error) {
+      console.error("error updating course", error);
     }
   }
 

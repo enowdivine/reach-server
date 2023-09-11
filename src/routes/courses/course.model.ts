@@ -12,10 +12,10 @@ const course = new mongoose.Schema(
     },
     introVideoUrl: {
       type: String,
-      required: [true, "introductory video url is required"],
+      default: "",
     },
     desc: {
-      type: String,
+      type: Object,
       required: [true, "description is required"],
     },
     category: {
@@ -23,36 +23,24 @@ const course = new mongoose.Schema(
       required: [true, "category is required"],
     },
     coverImage: {
-      type: String,
-      default: "",
+      type: Object,
+      required: [true, "cover image is required"],
     },
     price: {
       type: Number || String,
-      default: 0,
-    },
-    discount: {
-      type: Number,
       default: 0,
     },
     courseLevel: {
       type: String,
       default: "",
     },
-    numberOfChapters: {
-      type: Number,
-      default: 0,
-    },
-    numberOfLessons: {
-      type: Number,
-      default: 0,
-    },
     saleCount: {
       type: Number,
       default: 0,
     },
     duration: {
-      type: Date,
-      default: null,
+      type: Number,
+      default: 0,
     },
     tags: {
       type: Array,

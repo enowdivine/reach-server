@@ -1,14 +1,15 @@
 import express, { Router } from "express";
 import Course from "./course.controller";
+import { upload } from "../../middleware/s3/s3";
 
 const router: Router = express.Router();
 const course = new Course();
 
-router.post("/create", course.create);
+router.post("/create", upload.single("coverImage"), course.create);
 
 router.get("/course/:id", course.course);
 router.get("/courses", course.courses);
-router.get("/instructor-courses/:instructorId", course.courses);
+router.get("/instructor-courses/:instructorId", course.instructorCourses);
 router.get("/approved-courses", course.approvedCourses);
 
 router.put("/update-course/:id", course.update);

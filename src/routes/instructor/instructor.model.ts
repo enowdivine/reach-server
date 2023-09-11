@@ -54,13 +54,9 @@ const instructor = new mongoose.Schema(
       type: String,
       default: "instructor",
     },
-    isActive: {
-      type: Boolean,
-      default: true,
-    },
-    isApproved: {
-      type: Boolean,
-      default: false,
+    status: {
+      type: String,
+      default: "pending",
     },
   },
   {
