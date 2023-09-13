@@ -12,7 +12,7 @@ router.get("/courses", course.courses);
 router.get("/instructor-courses/:instructorId", course.instructorCourses);
 router.get("/approved-courses", course.approvedCourses);
 
-router.put("/update-course/:id", course.update);
+router.put("/update-course/:id", upload.single("coverImage"), course.update);
 router.put("/update-status/:id", course.updateStatus);
 
 router.delete("/delete-course/:id", course.deleteCourse);

@@ -2,6 +2,10 @@ import { Request, Response } from "express";
 import Course from "./course.model";
 import { deleteObject } from "../../middleware/s3/s3";
 
+interface MulterRequest extends Request {
+  file: any;
+}
+
 class CourseController {
   async create(req: Request, res: Response) {
     try {
@@ -118,7 +122,7 @@ class CourseController {
 
   async update(req: Request, res: Response) {
     try {
-      const multerFiles = JSON.parse(JSON.stringify(req.file));
+      const multerFiles = (req as MulterRequest).file;
       if (multerFiles) {
         const image = {
           doc: multerFiles?.location,
@@ -145,9 +149,7 @@ class CourseController {
               courseLevel: req.body.courseLevel,
               duration: req.body.duration,
               language: req.body.language,
-            },
-            $push: {
-              tags: { tags: req.body.tags },
+              tags: req.body.tags,
             },
           }
         );
@@ -175,9 +177,7 @@ class CourseController {
               courseLevel: req.body.courseLevel,
               duration: req.body.duration,
               language: req.body.language,
-            },
-            $push: {
-              tags: { tags: req.body.tags },
+              tags: req.body.tags,
             },
           }
         );
