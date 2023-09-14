@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import Chapter from "./chapter.model";
+import lessonModel from "../lessons/lesson.model";
+import { deleteObject } from "../../middleware/s3/s3";
 
 class CourseController {
   async create(req: Request, res: Response) {
@@ -84,6 +86,13 @@ class CourseController {
 
   async deleteChapter(req: Request, res: Response) {
     try {
+      const lessons = await lessonModel.find({ chapterId: req.params.id });
+      if (lessons.length > 0) {
+        lessons.map(async (lesson) => {
+          let lessonKey = lesson.content.key;
+          await deleteObject(lessonKey);
+        });
+      }
       const response = await Chapter.deleteOne({ _id: req.params.id });
       if (response.deletedCount > 0) {
         res.status(200).json({

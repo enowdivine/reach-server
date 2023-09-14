@@ -10,13 +10,13 @@ const lesson = new mongoose.Schema(
       type: String,
       required: [true, "title is required"],
     },
-    duration: {
-      type: Date,
-      default: null,
-    },
     content: {
-      type: String,
-      default: "",
+      type: Object,
+      required: [true, "content is required"],
+    },
+    duration: {
+      type: Number,
+      required: [true, "duration is required"],
     },
   },
   {
