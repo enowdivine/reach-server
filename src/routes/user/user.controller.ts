@@ -336,141 +336,141 @@ class UserController {
     }
   }
 
-  async addToWishlist(req: Request, res: Response) {
-    try {
-      const user = await User.findOne({ _id: req.params.id });
-      if (user) {
-        const itemID = req.body.item._id;
-        const userWishlist = user.wishlist;
-        const temp = userWishlist.filter((item) => item.id === itemID);
-        if (temp.length > 0) {
-          return res.status(400).json({
-            message: "item already exist in wislist",
-          });
-        }
-        user.wishlist.push(req.body.item);
-        user.save().then(() => {
-          return res.status(200).json({
-            message: "item added to wishlist",
-          });
-        });
-      }
-    } catch (error) {
-      console.error("error adding item to wishlist", error);
-    }
-  }
+  // async addToWishlist(req: Request, res: Response) {
+  //   try {
+  //     const user = await User.findOne({ _id: req.params.id });
+  //     if (user) {
+  //       const itemID = req.body.item._id;
+  //       const userWishlist = user.wishlist;
+  //       const temp = userWishlist.filter((item) => item.id === itemID);
+  //       if (temp.length > 0) {
+  //         return res.status(400).json({
+  //           message: "item already exist in wislist",
+  //         });
+  //       }
+  //       user.wishlist.push(req.body.item);
+  //       user.save().then(() => {
+  //         return res.status(200).json({
+  //           message: "item added to wishlist",
+  //         });
+  //       });
+  //     }
+  //   } catch (error) {
+  //     console.error("error adding item to wishlist", error);
+  //   }
+  // }
 
-  async viewWishlist(req: Request, res: Response) {
-    try {
-      const user = await User.findOne({ _id: req.params.id });
-      if (user) {
-        const wishlist = user.wishlist;
-        return res.status(200).json({
-          wishlist: wishlist,
-        });
-      } else {
-        return res.status(404).json({
-          message: "user not found",
-        });
-      }
-    } catch (error) {
-      console.error("error fetching wishlist", error);
-    }
-  }
+  // async viewWishlist(req: Request, res: Response) {
+  //   try {
+  //     const user = await User.findOne({ _id: req.params.id });
+  //     if (user) {
+  //       const wishlist = user.wishlist;
+  //       return res.status(200).json({
+  //         wishlist: wishlist,
+  //       });
+  //     } else {
+  //       return res.status(404).json({
+  //         message: "user not found",
+  //       });
+  //     }
+  //   } catch (error) {
+  //     console.error("error fetching wishlist", error);
+  //   }
+  // }
 
-  async removeFromWishlist(req: Request, res: Response) {
-    try {
-      const user = await User.updateOne(
-        { _id: req.params.id },
-        {
-          $pull: {
-            wishlist: {
-              _id: req.body.item._id,
-            },
-          },
-        }
-      );
-      if (user.acknowledged) {
-        return res.status(200).json({
-          message: "item removed from wishlist",
-        });
-      } else {
-        return res.status(404).json({
-          message: "item not found",
-        });
-      }
-    } catch (error) {
-      console.error("error removing item from wishlist", error);
-    }
-  }
+  // async removeFromWishlist(req: Request, res: Response) {
+  //   try {
+  //     const user = await User.updateOne(
+  //       { _id: req.params.id },
+  //       {
+  //         $pull: {
+  //           wishlist: {
+  //             _id: req.body.item._id,
+  //           },
+  //         },
+  //       }
+  //     );
+  //     if (user.acknowledged) {
+  //       return res.status(200).json({
+  //         message: "item removed from wishlist",
+  //       });
+  //     } else {
+  //       return res.status(404).json({
+  //         message: "item not found",
+  //       });
+  //     }
+  //   } catch (error) {
+  //     console.error("error removing item from wishlist", error);
+  //   }
+  // }
 
-  async addToCart(req: Request, res: Response) {
-    try {
-      const user = await User.findOne({ _id: req.params.id });
-      if (user) {
-        const itemID = req.body.item._id;
-        const userCart = user.cart;
-        const temp = userCart.filter((item) => item.id === itemID);
-        if (temp.length > 0) {
-          return res.status(400).json({
-            message: "item already exist in cart",
-          });
-        }
-        user.cart.push(req.body.item);
-        user.save().then(() => {
-          return res.status(200).json({
-            message: "item added to cart",
-          });
-        });
-      }
-    } catch (error) {
-      console.error("error adding item to cart", error);
-    }
-  }
+  // async addToCart(req: Request, res: Response) {
+  //   try {
+  //     const user = await User.findOne({ _id: req.params.id });
+  //     if (user) {
+  //       const itemID = req.body.item._id;
+  //       const userCart = user.cart;
+  //       const temp = userCart.filter((item) => item.id === itemID);
+  //       if (temp.length > 0) {
+  //         return res.status(400).json({
+  //           message: "item already exist in cart",
+  //         });
+  //       }
+  //       user.cart.push(req.body.item);
+  //       user.save().then(() => {
+  //         return res.status(200).json({
+  //           message: "item added to cart",
+  //         });
+  //       });
+  //     }
+  //   } catch (error) {
+  //     console.error("error adding item to cart", error);
+  //   }
+  // }
 
-  async removeFromCart(req: Request, res: Response) {
-    try {
-      const user = await User.updateOne(
-        { _id: req.params.id },
-        {
-          $pull: {
-            cart: {
-              _id: req.body.item._id,
-            },
-          },
-        }
-      );
-      if (user.acknowledged) {
-        return res.status(200).json({
-          message: "item removed from cart",
-        });
-      } else {
-        return res.status(404).json({
-          message: "item not found",
-        });
-      }
-    } catch (error) {
-      console.error("error removing item from cart", error);
-    }
-  }
+  // async removeFromCart(req: Request, res: Response) {
+  //   try {
+  //     const user = await User.updateOne(
+  //       { _id: req.params.id },
+  //       {
+  //         $pull: {
+  //           cart: {
+  //             _id: req.body.item._id,
+  //           },
+  //         },
+  //       }
+  //     );
+  //     if (user.acknowledged) {
+  //       return res.status(200).json({
+  //         message: "item removed from cart",
+  //       });
+  //     } else {
+  //       return res.status(404).json({
+  //         message: "item not found",
+  //       });
+  //     }
+  //   } catch (error) {
+  //     console.error("error removing item from cart", error);
+  //   }
+  // }
 
-  async viewCart(req: Request, res: Response) {
-    try {
-      const user = await User.findOne({ _id: req.params.id });
-      if (user) {
-        const cart = user.cart;
-        return res.status(200).json({
-          cart: cart,
-        });
-      } else {
-        return res.status(404).json({
-          message: "user not found",
-        });
-      }
-    } catch (error) {
-      console.error("error fetching cart", error);
-    }
-  }
+  // async viewCart(req: Request, res: Response) {
+  //   try {
+  //     const user = await User.findOne({ _id: req.params.id });
+  //     if (user) {
+  //       const cart = user.cart;
+  //       return res.status(200).json({
+  //         cart: cart,
+  //       });
+  //     } else {
+  //       return res.status(404).json({
+  //         message: "user not found",
+  //       });
+  //     }
+  //   } catch (error) {
+  //     console.error("error fetching cart", error);
+  //   }
+  // }
 
   async updateStatus(req: Request, res: Response) {
     try {
