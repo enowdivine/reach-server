@@ -9,7 +9,7 @@ export function emailVerification(username: string, url: string) {
             </p>
             <p>
             Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officiis nesciunt
-            <a href={${url}}>Click here</a>
+            <a href="${url}">Click here</a>
             </p>
             <p>
             Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officiis nesciunt
@@ -49,7 +49,7 @@ export function forgotPasswordEmail(username: string, url: string) {
             </p>
               <p>
             Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officiis nesciunt
-            <a href={${url}}>Click here</a>
+             <a href="${url}">Click here</a>
             </p>
               <p>
             Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officiis nesciunt

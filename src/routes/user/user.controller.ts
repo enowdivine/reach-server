@@ -43,7 +43,7 @@ class UserController {
             message: emailVerification(response.username as string, url),
           });
           res.status(201).json({
-            message: "success",
+            message: "success, check email",
             token,
           });
         })
