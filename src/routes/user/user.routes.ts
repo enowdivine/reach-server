@@ -8,6 +8,7 @@ router.post("/register", user.register);
 router.post("/login", user.login);
 router.post("/forgot-password", user.forgotPassword);
 
+router.get("/verification/:token", user.verifyEmail);
 router.get("/user/:id", user.user);
 router.get("/users", user.users);
 

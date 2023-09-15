@@ -4,7 +4,11 @@ import bcrypt from "bcrypt";
 import _ from "lodash";
 import User from "./user.model";
 import sendEmail from "../../services/email/sendEmail";
-import { welcomeEmail } from "./templates/welcomeEmail";
+import {
+  welcomeEmail,
+  emailVerification,
+  forgotPasswordEmail,
+} from "./templates/emails";
 
 class UserController {
   async register(req: Request, res: Response) {
@@ -32,10 +36,11 @@ class UserController {
             },
             process.env.JWT_SECRET as string
           );
+          const url = `${process.env.SERVER_URL}/api/${process.env.API_VERSION}/user/verification/${token}`;
           sendEmail({
             to: response.email as string,
-            subject: "Deonicode: Welcome Email",
-            message: welcomeEmail(response.username as string),
+            subject: "Deonicode: Email Verification",
+            message: emailVerification(response.username as string, url),
           });
           res.status(201).json({
             message: "success",
@@ -53,10 +58,48 @@ class UserController {
     }
   }
 
+  async verifyEmail(req: Request, res: Response) {
+    try {
+      const decodedToken: any = jwt.verify(
+        req.params.token,
+        process.env.JWT_SECRET as string
+      );
+      const response = await User.updateOne(
+        { _id: decodedToken.id },
+        {
+          $set: {
+            emailConfirmed: true,
+          },
+        }
+      );
+      if (response.acknowledged) {
+        sendEmail({
+          to: decodedToken.email as string,
+          subject: "Deonicode: Welcome",
+          message: welcomeEmail(decodedToken.username as string),
+        });
+        res.status(200).json({
+          message: "enail verification successfull.",
+        });
+      } else {
+        res.status(500).json({
+          message: "email verification failed",
+        });
+      }
+    } catch (error) {
+      console.error("error in email verification", error);
+    }
+  }
+
   async login(req: Request, res: Response) {
     try {
       const user = await User.findOne({ email: req.body.email });
       if (user) {
+        if (user.emailConfirmed === false) {
+          return res.status(401).json({
+            message: "verify email to login",
+          });
+        }
         bcrypt.compare(
           req.body.password,
           user.password!,
@@ -227,11 +270,11 @@ class UserController {
             expiresIn: "1h",
           }
         );
-        const url = `<a href="${process.env.FRONTEND_URL}/new-password/${resetToken}">Click here</a>`;
+        const url = `${process.env.FRONTEND_URL}/new-password/${resetToken}`;
         sendEmail({
           to: user.email as string,
-          subject: "Deonicode: Reset Password",
-          message: welcomeEmail(url),
+          subject: "Deonicode: Password Reset",
+          message: forgotPasswordEmail(user.username as string, url),
         });
         return res.status(200).json({
           message: "success, check your inbox",

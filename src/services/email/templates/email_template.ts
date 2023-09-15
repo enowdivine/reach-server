@@ -25,7 +25,7 @@ export default function email(subject: string, message: string) {
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css"
     />
-    <title>Digital Coffee</title>
+    <title>Deonicode</title>
     <style>
       .wrapper {
         width: 60%;
@@ -36,7 +36,7 @@ export default function email(subject: string, message: string) {
       }
 
       header {
-        background-color: purple;
+        background-color: #f16126;
         padding: 20px;
         color: white;
       }
@@ -73,17 +73,17 @@ export default function email(subject: string, message: string) {
   <body>
     <div class="wrapper">
       <header>
-        <h2>Digital Coffee</h2>
+        <h2>Deonicode</h2>
         ${subject}
       </header>
       <div class="logo">
         <a
           style="width: 100%"
-          href="https://lh3.googleusercontent.com/drive-viewer/AITFw-wm7groVaiN2KifbsMRyti_t_YjMpUi6j3m6ptj1u5TgsMKXgEszFQAP5ymk1DoBV8d6Q3OH4P966twOUawEzPWLFGdxQ=s2560?source=screenshot.guru"
+          href="https://lh3.googleusercontent.com/drive-viewer/AITFw-wjx_w97-4cn4nAUis0tfqBP9Im9KJ5Eg2739yTitgzdrv9rypqS32I2zJMjgywVGQsuW_J7pXgYrtr4IW_ok55umfH=s2560?source=screenshot.guru"
         >
           <img
-            style="width: 25%"
-            src="https://lh3.googleusercontent.com/drive-viewer/AITFw-wm7groVaiN2KifbsMRyti_t_YjMpUi6j3m6ptj1u5TgsMKXgEszFQAP5ymk1DoBV8d6Q3OH4P966twOUawEzPWLFGdxQ=s2560"
+            style="width: 10%"
+            src="https://lh3.googleusercontent.com/drive-viewer/AITFw-wjx_w97-4cn4nAUis0tfqBP9Im9KJ5Eg2739yTitgzdrv9rypqS32I2zJMjgywVGQsuW_J7pXgYrtr4IW_ok55umfH=s2560"
           />
         </a>
       </div>
@@ -91,34 +91,34 @@ export default function email(subject: string, message: string) {
         <p>${message}</p>
       </div>
       <!-- <div>
-          <h5>Socials</h5>
-          <div class="p-2">
-            <a href="#"
-              ><i
-                class="bi bi-facebook text-danger m-1 rounded-circle"
-                style="font-size: 1.5rem"
-              ></i
-            ></a>
-            <a href="#">
-              <i
-                class="bi bi-instagram text-danger m-1 rounded-circle"
-                style="font-size: 1.5rem"
-              ></i
-            ></a>
-            <a href="#"
-              ><i
-                class="bi bi-linkedin text-danger m-1 rounded-circle"
-                style="font-size: 1.5rem"
-              ></i
-            ></a>
-          </div>
-        </div> -->
+        <h5>Socials</h5>
+        <div class="p-2">
+          <a href="#"
+            ><i
+              class="bi bi-facebook text-danger m-1 rounded-circle"
+              style="font-size: 1.5rem"
+            ></i
+          ></a>
+          <a href="#">
+            <i
+              class="bi bi-instagram text-danger m-1 rounded-circle"
+              style="font-size: 1.5rem"
+            ></i
+          ></a>
+          <a href="#"
+            ><i
+              class="bi bi-linkedin text-danger m-1 rounded-circle"
+              style="font-size: 1.5rem"
+            ></i
+          ></a>
+        </div>
+      </div> -->
       <footer>
         <!-- <p>
           <a href="#">Privacy Policy</a> |
           <a href="#">Contact Support</a>
         </p> -->
-        <p>&copy; 2023 Digital Coffee</p>
+        <p>&copy; 2023 Deonicode Learning Platform</p>
       </footer>
     </div>
   </body>
