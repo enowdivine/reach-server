@@ -69,10 +69,10 @@ class CourseController {
 
   async courses(req: Request, res: Response) {
     try {
-      const course = await Course.find();
-      if (course) {
+      const courses = await Course.find();
+      if (courses) {
         return res.status(200).json({
-          course,
+          courses,
         });
       } else {
         return res.status(404).json({
