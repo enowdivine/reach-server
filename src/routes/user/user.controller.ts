@@ -476,7 +476,7 @@ class UserController {
     try {
       const user = await User.findOne({ _id: req.params.id });
       if (user) {
-        user.isActive = !user.isActive;
+        user.status = req.body.status;
         await user.save().then(() => {
           return res.status(200).json({
             message: "user status updated",
