@@ -17,6 +17,6 @@ router.put("/update-password/:id", istructor.updatePassword);
 router.put("/new-password/:id", istructor.newPassword);
 
 router.delete("/delete-istructor/:id", istructor.deleteInstructor);
-router.put("/update-status/:id", istructor.updateStatus);
+router.put("/update-instructor-status/:id", istructor.updateStatus);
 
 export default router;

@@ -25,6 +25,6 @@ router.put("/new-password/:id", user.newPassword);
 // router.get("/cart/:id", user.viewCart);
 
 router.delete("/delete-user/:id", user.deleteUser);
-router.put("/deactivate-user/:id", user.updateStatus);
+router.put("/update-user-status/:id", user.updateStatus);
 
 export default router;
