@@ -211,6 +211,23 @@ class InstructorController {
     }
   }
 
+  async courseAuthor(req: Request, res: Response) {
+    try {
+      const user = await Instructor.findOne({ _id: req.params.authorId });
+      if (user) {
+        return res.status(200).json({
+          user,
+        });
+      } else {
+        return res.status(404).json({
+          message: "instructor not found",
+        });
+      }
+    } catch (error) {
+      console.error("error fetching instructor", error);
+    }
+  }
+
   async instructors(req: Request, res: Response) {
     try {
       const users = await Instructor.find();

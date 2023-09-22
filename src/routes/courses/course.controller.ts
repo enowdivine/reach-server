@@ -67,25 +67,6 @@ class CourseController {
     }
   }
 
-  async courseAuthor(req: Request, res: Response) {
-    try {
-      const course = await Course.findOne({
-        instructorId: req.params.authorId,
-      });
-      if (course) {
-        return res.status(200).json({
-          course,
-        });
-      } else {
-        return res.status(404).json({
-          message: "course not found",
-        });
-      }
-    } catch (error) {
-      console.error("error fetching course", error);
-    }
-  }
-
   async courses(req: Request, res: Response) {
     try {
       const courses = await Course.find();
