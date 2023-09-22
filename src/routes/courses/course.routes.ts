@@ -8,6 +8,7 @@ const course = new Course();
 router.post("/create", upload.single("coverImage"), course.create);
 
 router.get("/course/:id", course.course);
+router.get("/course-author/:authorId", course.courseAuthor);
 router.get("/courses", course.courses);
 router.get("/instructor-courses/:instructorId", course.instructorCourses);
 router.get("/approved-courses", course.approvedCourses);
