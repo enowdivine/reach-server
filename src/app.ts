@@ -11,6 +11,7 @@ import instructorRoutes from "./routes/instructor/instructor.routes";
 import courseRoutes from "./routes/courses/course.routes";
 import chapterRoutes from "./routes/chapters/chapter.routes";
 import lessonRoutes from "./routes/lessons/lesson.routes";
+import categoryRoutes from "./routes/categories/category.routes";
 
 const corsOptions = {
   origin: "*",
@@ -32,6 +33,7 @@ app.use(`/api/${process.env.API_VERSION}/instructor`, instructorRoutes);
 app.use(`/api/${process.env.API_VERSION}/course`, courseRoutes);
 app.use(`/api/${process.env.API_VERSION}/chapter`, chapterRoutes);
 app.use(`/api/${process.env.API_VERSION}/lesson`, lessonRoutes);
+app.use(`/api/${process.env.API_VERSION}/category`, categoryRoutes);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Deonicode Server 🚀");

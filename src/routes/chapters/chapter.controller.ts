@@ -3,7 +3,7 @@ import Chapter from "./chapter.model";
 import lessonModel from "../lessons/lesson.model";
 import { deleteObject } from "../../middleware/s3/s3";
 
-class CourseController {
+class ChapterController {
   async create(req: Request, res: Response) {
     try {
       const course = new Chapter({
@@ -109,4 +109,4 @@ class CourseController {
   }
 }
 
-export default CourseController;
+export default ChapterController;
