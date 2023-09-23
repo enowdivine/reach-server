@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 import _ from "lodash";
 import Instructor from "./instructor.model";
 import sendEmail from "../../services/email/sendEmail";
+import { deleteObject } from "../../middleware/s3/s3";
 import { welcomeEmail } from "./templates/welcomeEmail";
 
 class InstructorController {
@@ -59,6 +60,59 @@ class InstructorController {
       }
     } catch (error) {
       console.error("error in instructor registration", error);
+    }
+  }
+
+  async uploadProfileImage(req: Request, res: Response) {
+    try {
+      const instructor = await Instructor.findOne({ _id: req.params.id });
+      if (instructor) {
+        const imageKey = instructor.avatar.key;
+        await deleteObject(imageKey);
+      }
+      const multerFiles = JSON.parse(JSON.stringify(req.file));
+      if (multerFiles) {
+        const image = {
+          doc: multerFiles?.location,
+          key: multerFiles?.key,
+        };
+        const user = await Instructor.updateOne(
+          {
+            _id: req.params.id,
+          },
+          {
+            $set: {
+              avatar: image,
+            },
+          }
+        );
+        if (user.acknowledged) {
+          const newuser = await Instructor.findOne({ _id: req.params.id });
+          const token: string = jwt.sign(
+            {
+              id: newuser?._id,
+              username: newuser?.username,
+              email: newuser?.email,
+              role: newuser?.role,
+            },
+            process.env.JWT_SECRET as string
+          );
+          res.status(200).json({
+            message: "update successful",
+            token: token,
+          });
+        } else {
+          res.status(404).json({
+            message: "user not found",
+          });
+        }
+      } else {
+        return res.status(500).json({
+          message: "image upload failed",
+        });
+      }
+    } catch (error) {
+      console.error("error uploading profile image", error);
     }
   }
 

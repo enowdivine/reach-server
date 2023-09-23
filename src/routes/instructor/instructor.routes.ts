@@ -6,6 +6,11 @@ const router: Router = express.Router();
 const instructor = new Instructor();
 
 router.post("/register", upload.single("resume"), instructor.register);
+router.post(
+  "/upload-profile-image",
+  upload.single("profileImage"),
+  instructor.register
+);
 router.post("/login", instructor.login);
 router.post("/forgot-password", instructor.forgotPassword);
 
