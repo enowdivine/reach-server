@@ -67,8 +67,10 @@ class InstructorController {
     try {
       const instructor = await Instructor.findOne({ _id: req.params.id });
       if (instructor) {
-        const imageKey = instructor.avatar.key;
-        await deleteObject(imageKey);
+        if(instructor.avatar !== null){
+          const imageKey = instructor.avatar.key;
+          await deleteObject(imageKey);
+        }
       }
       const multerFiles = JSON.parse(JSON.stringify(req.file));
       if (multerFiles) {
