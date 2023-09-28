@@ -18,6 +18,7 @@ class CourseController {
         const course = new Course({
           instructorId: req.body.instructorId,
           title: req.body.title,
+          introVideoUrl: req.body.introVideoUrl,
           desc: req.body.desc,
           category: req.body.category,
           coverImage: image,
