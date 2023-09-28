@@ -67,7 +67,7 @@ class InstructorController {
     try {
       const instructor = await Instructor.findOne({ _id: req.params.id });
       if (instructor) {
-        if(instructor.avatar !== null){
+        if (instructor.avatar !== null) {
           const imageKey = instructor.avatar.key;
           await deleteObject(imageKey);
         }
@@ -194,6 +194,43 @@ class InstructorController {
       );
       res.status(200).json({
         message: "update successful",
+        token: token,
+      });
+    } else {
+      res.status(404).json({
+        message: "user not found",
+      });
+    }
+  }
+
+  async updateSocials(req: Request, res: Response) {
+    const user = await Instructor.updateOne(
+      {
+        _id: req.params.id,
+      },
+      {
+        $set: {
+          facebook: req.body.facebook,
+          twitter: req.body.twitter,
+          linkedIn: req.body.linkedIn,
+          instagram: req.body.instagram,
+          youtube: req.body.youtube,
+        },
+      }
+    );
+    if (user.acknowledged) {
+      const newuser = await Instructor.findOne({ _id: req.params.id });
+      const token: string = jwt.sign(
+        {
+          id: newuser?._id,
+          username: newuser?.username,
+          email: newuser?.email,
+          role: newuser?.role,
+        },
+        process.env.JWT_SECRET as string
+      );
+      res.status(200).json({
+        message: "socials updated",
         token: token,
       });
     } else {

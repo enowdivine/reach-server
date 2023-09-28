@@ -58,6 +58,27 @@ const instructor = new mongoose.Schema(
       type: String,
       default: "pending",
     },
+    // socials
+    facebook: {
+      type: String,
+      default: "",
+    },
+    twitter: {
+      type: String,
+      default: "",
+    },
+    linkedIn: {
+      type: String,
+      default: "",
+    },
+    instagram: {
+      type: String,
+      default: "",
+    },
+    youtube: {
+      type: String,
+      default: "",
+    },
   },
   {
     timestamps: true,

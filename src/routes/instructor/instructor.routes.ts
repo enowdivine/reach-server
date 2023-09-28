@@ -19,6 +19,7 @@ router.put(
   instructor.uploadProfileImage
 );
 router.put("/update-user/:id", instructor.update);
+router.put("/update-social-details/:id", instructor.updateSocials);
 router.put("/update-password/:id", instructor.updatePassword);
 router.put("/new-password/:id", instructor.newPassword);
 
