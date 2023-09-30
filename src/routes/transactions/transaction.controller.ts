@@ -26,7 +26,7 @@ class TransactionController {
             course.save().then(async () => {
               const user = await userModel.updateOne(
                 { _id: req.body.userId },
-                { $push: { purchasedCourses: { cid: req.body.courseId } } }
+                { $push: { purchasedCourses: req.body.courseId } }
               );
               if (user.acknowledged) {
                 res.status(201).json({
