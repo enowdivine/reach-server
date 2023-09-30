@@ -47,7 +47,9 @@ class ChapterController {
 
   async chapters(req: Request, res: Response) {
     try {
-      const chapters = await Chapter.find({ courseId: req.params.courseId });
+      const chapters = await Chapter.find({
+        courseId: req.params.courseId,
+      });
       if (chapters) {
         return res.status(200).json({
           chapters,

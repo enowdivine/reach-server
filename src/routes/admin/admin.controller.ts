@@ -82,35 +82,45 @@ class AdminController {
       } else if (admin === null) {
         const user = await Instructor.findOne({ email: req.body.email });
         if (user) {
-          bcrypt.compare(
-            req.body.password,
-            user.password!,
-            (err: any, result: any) => {
-              if (err) {
-                return res.status(401).json({
+          if (user.status === "pending") {
+            res.status(500).json({
+              message: `Application is still under review`,
+            });
+          } else if (user.status !== "active") {
+            res.status(500).json({
+              message: `Account ${user.status}, contact support for more info.`,
+            });
+          } else {
+            bcrypt.compare(
+              req.body.password,
+              user.password!,
+              (err: any, result: any) => {
+                if (err) {
+                  return res.status(401).json({
+                    message: "authentication failed",
+                  });
+                }
+                if (result) {
+                  const token: string = jwt.sign(
+                    {
+                      id: user._id,
+                      username: user.username,
+                      email: user.email,
+                      role: user.role,
+                    },
+                    process.env.JWT_SECRET as string
+                  );
+                  return res.status(200).json({
+                    message: "login successful",
+                    token: token,
+                  });
+                }
+                res.status(401).json({
                   message: "authentication failed",
                 });
               }
-              if (result) {
-                const token: string = jwt.sign(
-                  {
-                    id: user._id,
-                    username: user.username,
-                    email: user.email,
-                    role: user.role,
-                  },
-                  process.env.JWT_SECRET as string
-                );
-                return res.status(200).json({
-                  message: "login successful",
-                  token: token,
-                });
-              }
-              res.status(401).json({
-                message: "authentication failed",
-              });
-            }
-          );
+            );
+          }
         }
       } else {
         return res.status(401).json({

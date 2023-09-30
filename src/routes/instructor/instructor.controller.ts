@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import _ from "lodash";
 import Instructor from "./instructor.model";
+import AdminModel from "../admin/admin.model";
 import sendEmail from "../../services/email/sendEmail";
 import { deleteObject } from "../../middleware/s3/s3";
 import { welcomeEmail } from "./templates/welcomeEmail";
@@ -16,8 +17,9 @@ class InstructorController {
           doc: multerFiles?.location,
           key: multerFiles?.key,
         };
+        const admin = await AdminModel.findOne({ email: req.body.email });
         const user = await Instructor.findOne({ email: req.body.email });
-        if (user) {
+        if (user || admin) {
           return res.status(409).json({
             message: "email already exist",
           });
@@ -323,7 +325,7 @@ class InstructorController {
 
   async instructors(req: Request, res: Response) {
     try {
-      const users = await Instructor.find();
+      const users = await Instructor.find().sort({ createdAt: -1 });
       if (users) {
         return res.status(200).json({
           users,

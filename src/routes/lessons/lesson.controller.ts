@@ -63,7 +63,9 @@ class CourseController {
 
   async lessons(req: Request, res: Response) {
     try {
-      const lessons = await Lesson.find({ chapterId: req.params.chapId });
+      const lessons = await Lesson.find({ chapterId: req.params.chapId }).sort({
+        createdAt: -1,
+      });
       if (lessons) {
         return res.status(200).json({
           lessons,

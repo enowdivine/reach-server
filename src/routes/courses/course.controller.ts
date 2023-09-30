@@ -70,7 +70,7 @@ class CourseController {
 
   async courses(req: Request, res: Response) {
     try {
-      const courses = await Course.find();
+      const courses = await Course.find().sort({ createdAt: -1 });
       if (courses) {
         return res.status(200).json({
           courses,
@@ -89,7 +89,7 @@ class CourseController {
     try {
       const courses = await Course.find({
         instructorId: req.params.instructorId,
-      });
+      }).sort({ createdAt: -1 });
       if (courses) {
         return res.status(200).json({
           courses,
@@ -106,7 +106,9 @@ class CourseController {
 
   async approvedCourses(req: Request, res: Response) {
     try {
-      const courses = await Course.find({ isApproved: true });
+      const courses = await Course.find({ isApproved: true }).sort({
+        createdAt: -1,
+      });
       if (courses) {
         return res.status(200).json({
           courses,

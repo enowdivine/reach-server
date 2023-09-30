@@ -241,7 +241,7 @@ class UserController {
 
   async users(req: Request, res: Response) {
     try {
-      const users = await User.find();
+      const users = await User.find().sort({ createdAt: -1 });
       if (users) {
         return res.status(200).json({
           users,
