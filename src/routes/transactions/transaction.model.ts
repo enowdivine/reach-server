@@ -10,6 +10,10 @@ const transaction = new mongoose.Schema(
       type: String,
       required: [true, "userId is reuired"],
     },
+    instructorId: {
+      type: String,
+      required: [true, "instructorId is reuired"],
+    },
     amount: {
       type: Number,
       required: [true, "amount is reuired"],

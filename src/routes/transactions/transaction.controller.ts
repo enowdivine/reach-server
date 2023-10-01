@@ -10,6 +10,7 @@ class TransactionController {
       const transaction = new Transaction({
         courseId: req.body.courseId,
         userId: req.body.userId,
+        instructorId: req.body.instructorId,
         amount: req.body.amount,
         paymentMethod: req.body.paymentMethod,
         status: req.body.status,
@@ -65,6 +66,25 @@ class TransactionController {
       }
     } catch (error) {
       console.error("error fetching transaction", error);
+    }
+  }
+
+  async instructorTransaction(req: Request, res: Response) {
+    try {
+      const transaction = await Transaction.find({
+        instructorId: req.params.instructorId,
+      }).sort({ createdAt: -1 });
+      if (transaction) {
+        return res.status(200).json({
+          transaction,
+        });
+      } else {
+        return res.status(404).json({
+          message: "No transaction found",
+        });
+      }
+    } catch (error) {
+      console.error("error fetching transactions", error);
     }
   }
 
