@@ -71,12 +71,12 @@ class TransactionController {
 
   async instructorTransaction(req: Request, res: Response) {
     try {
-      const transaction = await Transaction.find({
+      const transactions = await Transaction.find({
         instructorId: req.params.instructorId,
       }).sort({ createdAt: -1 });
-      if (transaction) {
+      if (transactions) {
         return res.status(200).json({
-          transaction,
+          transactions,
         });
       } else {
         return res.status(404).json({
