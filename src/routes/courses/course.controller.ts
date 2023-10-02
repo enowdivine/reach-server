@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import Course from "./course.model";
+import UserModel from "../user/user.model";
 import { deleteObject } from "../../middleware/s3/s3";
 
 interface MulterRequest extends Request {
@@ -117,6 +118,27 @@ class CourseController {
         return res.status(404).json({
           message: "no course found",
         });
+      }
+    } catch (error) {
+      console.error("error fetching courses", error);
+    }
+  }
+
+  async purchasedCourses(req: Request, res: Response) {
+    try {
+      const user = await UserModel.findOne({ _id: req.params.userId });
+      if (user) {
+        const purchasedCourses = user.purchasedCourses;
+        const courses = await Course.find({ _id: { $in: purchasedCourses } });
+        if (courses.length > 0) {
+          return res.status(200).json({
+            courses,
+          });
+        } else {
+          return res.status(404).json({
+            message: "no course found",
+          });
+        }
       }
     } catch (error) {
       console.error("error fetching courses", error);

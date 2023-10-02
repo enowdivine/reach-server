@@ -11,6 +11,7 @@ router.get("/course/:id", course.course);
 router.get("/courses", course.courses);
 router.get("/instructor-courses/:instructorId", course.instructorCourses);
 router.get("/approved-courses", course.approvedCourses);
+router.get("/purchased-courses/:userId", course.purchasedCourses);
 
 router.put("/update-course/:id", upload.single("coverImage"), course.update);
 router.put("/update-status/:id", course.updateStatus);
