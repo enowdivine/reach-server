@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
-import Message from "./question.model";
+import Question from "./question.model";
 import UserModel from "../user/user.model";
 
 class QuestionAndAnswerController {
-  async createMessage(req: Request, res: Response) {
-    const newMessage = new Message({
+  async createQuestion(req: Request, res: Response) {
+    const newMessage = new Question({
       users: [req.body.senderId, req.body.receiverId, req.body.courseId],
       message: req.body.message,
     });
@@ -22,12 +22,15 @@ class QuestionAndAnswerController {
     }
   }
 
-  async getMessages(req: Request, res: Response) {
+  async getQuestions(req: Request, res: Response) {
     try {
-      const massages = await Message.find({
-        users: { $in: [req.params.id] },
+      const questions = await Question.find({
+        users: { $in: [req.params.userId, req.params.courseId] },
       });
-      res.status(200).send(massages);
+      const filteredQuestions = questions.filter(
+        (item) => item.users[2] === req.params.courseId
+      );
+      res.status(200).send(filteredQuestions);
     } catch (error) {
       res.status(500).json({
         error: error,
@@ -35,9 +38,9 @@ class QuestionAndAnswerController {
     }
   }
 
-  async getMessagedUsers(req: Request, res: Response) {
+  async getQuestionsUsers(req: Request, res: Response) {
     try {
-      const messages = await Message.find({
+      const messages = await Question.find({
         users: { $in: [req.params.id] },
       });
       const userIds = messages.filter(
