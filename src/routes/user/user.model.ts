@@ -24,8 +24,8 @@ const user = new mongoose.Schema(
       default: "",
     },
     avatar: {
-      type: String,
-      default: "",
+      type: Object,
+      default: null,
     },
     country: {
       type: String,

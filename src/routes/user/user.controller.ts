@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 import _ from "lodash";
 import User from "./user.model";
 import sendEmail from "../../services/email/sendEmail";
+import { deleteObject } from "../../middleware/s3/s3";
 import {
   welcomeEmail,
   emailVerification,
@@ -172,6 +173,60 @@ class UserController {
       res.status(404).json({
         message: "user not found",
       });
+    }
+  }
+
+  async uploadProfileImage(req: Request, res: Response) {
+    try {
+      const user = await User.findOne({ _id: req.params.id });
+      if (user) {
+        if (user.avatar !== null) {
+          const imageKey = user.avatar.key;
+          await deleteObject(imageKey);
+        }
+      }
+      const multerFiles = JSON.parse(JSON.stringify(req.file));
+      if (multerFiles) {
+        const image = {
+          doc: multerFiles?.location,
+          key: multerFiles?.key,
+        };
+        const user = await User.updateOne(
+          {
+            _id: req.params.id,
+          },
+          {
+            $set: {
+              avatar: image,
+            },
+          }
+        );
+        if (user.acknowledged) {
+          const newuser = await User.findOne({ _id: req.params.id });
+          const token: string = jwt.sign(
+            {
+              id: newuser?._id,
+              username: newuser?.username,
+              email: newuser?.email,
+            },
+            process.env.JWT_SECRET as string
+          );
+          res.status(200).json({
+            message: "update successful",
+            token: token,
+          });
+        } else {
+          res.status(404).json({
+            message: "user not found",
+          });
+        }
+      } else {
+        return res.status(500).json({
+          message: "image upload failed",
+        });
+      }
+    } catch (error) {
+      console.error("error uploading profile image", error);
     }
   }
 
