@@ -13,6 +13,7 @@ import chapterRoutes from "./routes/chapters/chapter.routes";
 import categoryRoutes from "./routes/categories/category.routes";
 import instructorRoutes from "./routes/instructor/instructor.routes";
 import transactionRoutes from "./routes/transactions/transaction.routes";
+import questionsRoutes from "./routes/questionsAndAnswers/question.routes";
 
 const corsOptions = {
   origin: "*",
@@ -33,6 +34,7 @@ app.use(`/api/${process.env.API_VERSION}/admin`, adminRoutes);
 app.use(`/api/${process.env.API_VERSION}/course`, courseRoutes);
 app.use(`/api/${process.env.API_VERSION}/lesson`, lessonRoutes);
 app.use(`/api/${process.env.API_VERSION}/chapter`, chapterRoutes);
+app.use(`/api/${process.env.API_VERSION}/q-and-a`, questionsRoutes);
 app.use(`/api/${process.env.API_VERSION}/category`, categoryRoutes);
 app.use(`/api/${process.env.API_VERSION}/instructor`, instructorRoutes);
 app.use(`/api/${process.env.API_VERSION}/transaction`, transactionRoutes);
