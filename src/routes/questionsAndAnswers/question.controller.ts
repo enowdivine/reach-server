@@ -43,10 +43,11 @@ class QuestionAndAnswerController {
       const messages = await Question.find({
         users: { $in: [req.params.id] },
       });
-      const userIds = messages.filter(
+      const userMessages = messages.filter(
         (item) => item.users[0] !== req.params.id
       );
-      const users = UserModel.find({ $in: userIds });
+      const userIds = userMessages.map((item) => item.users[0]);
+      const users = await UserModel.find({ _id: { $in: userIds } });
       res.status(200).send(users);
     } catch (error) {
       res.status(500).json({

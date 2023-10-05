@@ -35,14 +35,14 @@ const user = new mongoose.Schema(
       type: Array,
       default: [],
     },
-    // wishlist: {
-    //   type: Array,
-    //   default: [],
-    // },
-    // cart: {
-    //   type: Array,
-    //   default: [],
-    // },
+    wishlist: {
+      type: Array,
+      default: [],
+    },
+    cart: {
+      type: Array,
+      default: [],
+    },
     status: {
       type: String,
       default: "active",
