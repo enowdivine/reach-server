@@ -11,7 +11,7 @@ class QuestionAndAnswerController {
     try {
       const savedMessage = await newMessage.save();
       return res.status(200).json({
-        message: "Question sent",
+        message: "Message sent",
         savedMessage,
       });
     } catch (error) {
@@ -41,10 +41,12 @@ class QuestionAndAnswerController {
   async getQuestionsUsers(req: Request, res: Response) {
     try {
       const messages = await Question.find({
-        users: { $in: [req.params.id] },
+        users: { $in: [req.params.userId] },
       });
       const userMessages = messages.filter(
-        (item) => item.users[0] !== req.params.id
+        (item) =>
+          item.users[0] !== req.params.userId &&
+          item.users[2] === req.params.courseId
       );
       const userIds = userMessages.map((item) => item.users[0]);
       const users = await UserModel.find({ _id: { $in: userIds } });
