@@ -32,9 +32,7 @@ class CourseController {
         courseId: req.params.courseId,
       });
       if (announcements) {
-        return res.status(200).json({
-          announcements,
-        });
+        return res.status(200).json(announcements);
       } else {
         return res.status(404).json({
           message: "no announcement found",
