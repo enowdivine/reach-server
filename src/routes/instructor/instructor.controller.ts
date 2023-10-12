@@ -293,9 +293,7 @@ class InstructorController {
     try {
       const user = await Instructor.findOne({ _id: req.params.id });
       if (user) {
-        return res.status(200).json({
-          user,
-        });
+        return res.status(200).json(user);
       } else {
         return res.status(404).json({
           message: "instructor not found",
