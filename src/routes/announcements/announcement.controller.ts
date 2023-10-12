@@ -5,7 +5,7 @@ class CourseController {
   async create(req: Request, res: Response) {
     try {
       const announcement = new Announcement({
-        chapterId: req.body.chapterId,
+        courseId: req.body.courseId,
         content: req.body.content,
       });
       await announcement
