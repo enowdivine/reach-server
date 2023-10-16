@@ -145,9 +145,18 @@ class AdminController {
       }
     );
     if (admin.acknowledged) {
+      const newadmin = await Admin.findOne({ _id: req.params.id });
+      const token: string = jwt.sign(
+        {
+          id: newadmin?._id,
+          email: newadmin?.email,
+          role: newadmin?.role,
+        },
+        process.env.JWT_SECRET as string
+      );
       res.status(200).json({
         message: "update successful",
-        admin,
+        token: token,
       });
     } else {
       res.status(404).json({
