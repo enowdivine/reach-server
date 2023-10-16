@@ -37,6 +37,7 @@ app.use(`/api/${process.env.API_VERSION}/lesson`, lessonRoutes);
 app.use(`/api/${process.env.API_VERSION}/chapter`, chapterRoutes);
 app.use(`/api/${process.env.API_VERSION}/q-and-a`, questionsRoutes);
 app.use(`/api/${process.env.API_VERSION}/category`, categoryRoutes);
+app.use(`/api/${process.env.API_VERSION}/withdrawals`, categoryRoutes);
 app.use(`/api/${process.env.API_VERSION}/instructor`, instructorRoutes);
 app.use(`/api/${process.env.API_VERSION}/transaction`, transactionRoutes);
 app.use(`/api/${process.env.API_VERSION}/announcement`, announcementRoutes);
