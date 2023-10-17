@@ -69,7 +69,7 @@ class ChapterController {
         });
       } else {
         return res.status(404).json({
-          message: "no chapter found",
+          message: "no request found",
         });
       }
     } catch (error) {
