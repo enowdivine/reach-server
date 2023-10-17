@@ -47,11 +47,9 @@ class ChapterController {
     try {
       const requests = await Withdraw.find({
         userId: req.params.userId,
-      });
+      }).sort({ createdAt: -1 });
       if (requests) {
-        return res.status(200).json({
-          requests,
-        });
+        return res.status(200).json(requests);
       } else {
         return res.status(404).json({
           message: "no chapter found",
@@ -64,7 +62,7 @@ class ChapterController {
 
   async allWithdrawalsRequest(req: Request, res: Response) {
     try {
-      const requests = await Withdraw.find({});
+      const requests = await Withdraw.find({}).sort({ createdAt: -1 });
       if (requests) {
         return res.status(200).json({
           requests,
