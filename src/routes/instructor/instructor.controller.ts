@@ -49,7 +49,7 @@ class InstructorController {
             });
           })
           .catch((err) => {
-            console.log(err);
+            console.error(err);
             res.status(500).json({
               message: "error submitting form",
               error: err,

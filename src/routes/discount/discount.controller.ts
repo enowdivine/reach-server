@@ -7,24 +7,32 @@ import Discount from "./discount.model";
 class MailController {
   async createDiscount(req: Request, res: Response) {
     try {
+      const expiryDate = new Date(
+        new Date().getTime() + req.body.duration * 24 * 60 * 60 * 1000
+      );
       const token: string = jwt.sign(
         {
           amount: req.body.amount,
+          expiryDate,
         },
         process.env.JWT_SECRET as string,
         {
           expiresIn: `${req.body.duration}d`,
         }
       );
+
       const discount = new Discount({
-        title: req.body.title,
+        amount: req.body.amount,
+        expiresIn: expiryDate,
         token,
       });
+
       await discount
         .save()
-        .then(() => {
+        .then((response) => {
           res.status(201).json({
             message: "discount created",
+            response,
           });
         })
         .catch((err) => {
@@ -38,13 +46,13 @@ class MailController {
     }
   }
 
-  async discount(res: Response) {
+  async discount(req: Request, res: Response) {
     try {
       const discount = await Discount.find({}).sort({ createdAt: -1 });
       if (discount) {
-        return res.status(200).json(discount[0]);
+        res.status(200).json(discount[0]);
       } else {
-        return res.status(404).json({
+        res.status(404).json({
           message: "discount not found",
         });
       }
@@ -54,29 +62,37 @@ class MailController {
   }
 
   async updateDiscount(req: Request, res: Response) {
+    const expiryDate = new Date(
+      new Date().getTime() + req.body.duration * 24 * 60 * 60 * 1000
+    );
     const token: string = jwt.sign(
       {
         amount: req.body.amount,
+        expiryDate,
       },
       process.env.JWT_SECRET as string,
       {
         expiresIn: `${req.body.duration}d`,
       }
     );
+
     const discount = await Discount.updateOne(
       {
         _id: req.params.id,
       },
       {
         $set: {
-          title: req.body.title,
+          amount: req.body.amount,
+          expiresIn: expiryDate,
           token,
         },
       }
     );
     if (discount.acknowledged) {
+      const response = await Discount.find({}).sort({ createdAt: -1 });
       res.status(200).json({
         message: "update successful",
+        response,
       });
     } else {
       res.status(404).json({

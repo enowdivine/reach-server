@@ -157,7 +157,6 @@ class CourseController {
         if (course) {
           const imageKey = course.coverImage.key;
           const response = await deleteObject(imageKey);
-          console.log("delete response", response);
         }
         const updatedCourse = await Course.updateOne(
           {

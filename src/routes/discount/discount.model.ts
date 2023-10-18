@@ -10,6 +10,10 @@ const discount = new mongoose.Schema(
       type: String,
       required: [true, "token is required"],
     },
+    expiresIn: {
+      type: Date,
+      required: [true, "Expiry date is required"],
+    },
   },
   {
     timestamps: true,

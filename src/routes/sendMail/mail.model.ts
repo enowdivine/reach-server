@@ -7,7 +7,7 @@ const mail = new mongoose.Schema(
       required: [true, "title is required"],
     },
     message: {
-      type: Number,
+      type: String,
       required: [true, "message is required"],
     },
   },

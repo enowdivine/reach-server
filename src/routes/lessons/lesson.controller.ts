@@ -92,7 +92,6 @@ class CourseController {
         if (lesson) {
           const imageKey = lesson.content.key;
           const response = await deleteObject(imageKey);
-          console.log("delete response", response);
         }
         const updatedLesson = await Lesson.updateOne(
           {

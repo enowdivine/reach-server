@@ -46,7 +46,7 @@ class MailController {
   }
 
   async updateTemplate(req: Request, res: Response) {
-    const lesson = await MailTemplate.updateOne(
+    const newTemplate = await MailTemplate.updateOne(
       {
         _id: req.params.id,
       },
@@ -57,7 +57,7 @@ class MailController {
         },
       }
     );
-    if (lesson.acknowledged) {
+    if (newTemplate.acknowledged) {
       res.status(200).json({
         message: "update successful",
       });
