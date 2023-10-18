@@ -1,9 +1,7 @@
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import Discount from "./discount.model";
-import instructorModel from "../instructor/instructor.model";
-import userModel from "../user/user.model";
-import sendEmail from "../../services/email/sendEmail";
+// import sendEmail from "../../services/email/sendEmail";
 // import { generalMail } from "./templates/mails";
 
 class MailController {

@@ -11,6 +11,7 @@ import courseRoutes from "./routes/courses/course.routes";
 import lessonRoutes from "./routes/lessons/lesson.routes";
 import sendMailRoutes from "./routes/sendMail/mail.routes";
 import chapterRoutes from "./routes/chapters/chapter.routes";
+import discountRoutes from "./routes/discount/discount.routes";
 import categoryRoutes from "./routes/categories/category.routes";
 import instructorRoutes from "./routes/instructor/instructor.routes";
 import withdrawalRoutes from "./routes/withdrawals/withdraw.routes";
@@ -40,10 +41,12 @@ app.use(`/api/${process.env.API_VERSION}/mails`, sendMailRoutes);
 app.use(`/api/${process.env.API_VERSION}/chapter`, chapterRoutes);
 app.use(`/api/${process.env.API_VERSION}/q-and-a`, questionsRoutes);
 app.use(`/api/${process.env.API_VERSION}/category`, categoryRoutes);
+app.use(`/api/${process.env.API_VERSION}/discount`, discountRoutes);
 app.use(`/api/${process.env.API_VERSION}/withdrawals`, withdrawalRoutes);
 app.use(`/api/${process.env.API_VERSION}/instructor`, instructorRoutes);
 app.use(`/api/${process.env.API_VERSION}/transaction`, transactionRoutes);
 app.use(`/api/${process.env.API_VERSION}/announcement`, announcementRoutes);
+
 app.get("/", (req: Request, res: Response) => {
   res.send("Deonicode Server 🚀");
 });
