@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
 import MailTemplate from "./mail.model";
+import EmailModel from "./subscribe.model";
 import instructorModel from "../instructor/instructor.model";
 import userModel from "../user/user.model";
 import sendEmail from "../../services/email/sendEmail";
-import { generalMail } from "./templates/mails";
+import { generalMail, contactMail } from "./templates/mails";
 
 class MailController {
   async createTemplate(req: Request, res: Response) {
@@ -155,6 +156,46 @@ class MailController {
       }
     } catch (error) {
       console.error("error creating template", error);
+    }
+  }
+
+  async contactForm(req: Request, res: Response) {
+    try {
+      return sendEmail({
+        to: "deonicode@gmail.com",
+        subject: req.body.subject,
+        message: contactMail(
+          req.body.username as string,
+          req.body.email,
+          req.body.phoneNumber,
+          req.body.message
+        ),
+      });
+    } catch (error) {
+      console.error("error sending mail", error);
+    }
+  }
+
+  async subscribe(req: Request, res: Response) {
+    try {
+      const subscriber = new EmailModel({
+        email: req.body.email,
+      });
+      await subscriber
+        .save()
+        .then(() => {
+          res.status(201).json({
+            message: "subscription successful",
+          });
+        })
+        .catch((err) => {
+          res.status(500).json({
+            message: "an error occured",
+            error: err,
+          });
+        });
+    } catch (error) {
+      console.error("an error occured", error);
     }
   }
 }

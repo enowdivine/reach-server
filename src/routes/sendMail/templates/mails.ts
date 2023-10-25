@@ -19,3 +19,17 @@ export function generalMail(username: string, message: any) {
             </p>
   `;
 }
+
+export function contactMail(
+  username: string,
+  email: any,
+  phoneNumber: any,
+  message: any
+) {
+  return `
+            <h3>Username ${username},</h3>
+            <h3>Email address ${email},</h3>
+            <h3>phone number ${phoneNumber},</h3>
+            <p>${message}</p>
+  `;
+}
