@@ -179,6 +179,7 @@ class MailController {
   async subscribe(req: Request, res: Response) {
     try {
       const subscriber = new EmailModel({
+        username: req.body.username,
         email: req.body.email,
       });
       await subscriber
