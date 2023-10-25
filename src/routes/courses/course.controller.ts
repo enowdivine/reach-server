@@ -321,7 +321,6 @@ class CourseController {
           {
             category: { $regex: category },
           },
-
           {
             courseLevel: { $regex: courseLevel },
           },
