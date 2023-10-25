@@ -309,7 +309,7 @@ class CourseController {
         );
       const startPrice = req.body.startPrice;
       const endPrice = req.body.endPrice;
-      const sounds = await Course.find({
+      const courses = await Course.find({
         $and: [
           {
             isApproved: true,
@@ -338,8 +338,8 @@ class CourseController {
           },
         ],
       });
-      if (sounds) {
-        res.status(200).json(sounds);
+      if (courses) {
+        res.status(200).json(courses);
       } else {
         res.status(404).json({
           message: "No Course Found",
