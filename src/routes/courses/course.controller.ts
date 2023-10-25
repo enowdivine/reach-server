@@ -259,7 +259,8 @@ class CourseController {
 
   async searchCourse(req: Request, res: Response) {
     try {
-      const title = req.body.title
+      const data = JSON.parse(req.params.data);
+      const title = data.title
         .toLowerCase()
         .replace(
           /^[\u00C0-\u1FFF\u2C00-\uD7FF\w]|\s[\u00C0-\u1FFF\u2C00-\uD7FF\w]/g,
@@ -267,7 +268,7 @@ class CourseController {
             return letter.toUpperCase();
           }
         );
-      const category = req.body.category
+      const category = data.category
         .toLowerCase()
         .replace(
           /^[\u00C0-\u1FFF\u2C00-\uD7FF\w]|\s[\u00C0-\u1FFF\u2C00-\uD7FF\w]/g,
@@ -275,7 +276,7 @@ class CourseController {
             return letter.toUpperCase();
           }
         );
-      const courseLevel = req.body.courseLevel
+      const courseLevel = data.courseLevel
         .toLowerCase()
         .replace(
           /^[\u00C0-\u1FFF\u2C00-\uD7FF\w]|\s[\u00C0-\u1FFF\u2C00-\uD7FF\w]/g,
@@ -283,7 +284,7 @@ class CourseController {
             return letter.toUpperCase();
           }
         );
-      const tags = req.body.tags
+      const tags = data.tags
         .toLowerCase()
         .replace(
           /^[\u00C0-\u1FFF\u2C00-\uD7FF\w]|\s[\u00C0-\u1FFF\u2C00-\uD7FF\w]/g,
@@ -291,7 +292,7 @@ class CourseController {
             return letter.toUpperCase();
           }
         );
-      const language = req.body.language
+      const language = data.language
         .toLowerCase()
         .replace(
           /^[\u00C0-\u1FFF\u2C00-\uD7FF\w]|\s[\u00C0-\u1FFF\u2C00-\uD7FF\w]/g,
@@ -299,7 +300,7 @@ class CourseController {
             return letter.toUpperCase();
           }
         );
-      const rating = req.body.rating
+      const rating = data.rating
         .toLowerCase()
         .replace(
           /^[\u00C0-\u1FFF\u2C00-\uD7FF\w]|\s[\u00C0-\u1FFF\u2C00-\uD7FF\w]/g,
@@ -307,8 +308,8 @@ class CourseController {
             return letter.toUpperCase();
           }
         );
-      const startPrice = req.body.startPrice;
-      const endPrice = req.body.endPrice;
+      const startPrice = data.startPrice;
+      const endPrice = data.endPrice;
       const courses = await Course.find({
         $and: [
           {
