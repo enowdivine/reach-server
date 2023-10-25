@@ -256,6 +256,99 @@ class CourseController {
       console.error("error deleting course", error);
     }
   }
+
+  async searchCourse(req: Request, res: Response) {
+    try {
+      const title = req.body.title
+        .toLowerCase()
+        .replace(
+          /^[\u00C0-\u1FFF\u2C00-\uD7FF\w]|\s[\u00C0-\u1FFF\u2C00-\uD7FF\w]/g,
+          function (letter: string) {
+            return letter.toUpperCase();
+          }
+        );
+      const category = req.body.category
+        .toLowerCase()
+        .replace(
+          /^[\u00C0-\u1FFF\u2C00-\uD7FF\w]|\s[\u00C0-\u1FFF\u2C00-\uD7FF\w]/g,
+          function (letter: string) {
+            return letter.toUpperCase();
+          }
+        );
+      const courseLevel = req.body.courseLevel
+        .toLowerCase()
+        .replace(
+          /^[\u00C0-\u1FFF\u2C00-\uD7FF\w]|\s[\u00C0-\u1FFF\u2C00-\uD7FF\w]/g,
+          function (letter: string) {
+            return letter.toUpperCase();
+          }
+        );
+      const tags = req.body.tags
+        .toLowerCase()
+        .replace(
+          /^[\u00C0-\u1FFF\u2C00-\uD7FF\w]|\s[\u00C0-\u1FFF\u2C00-\uD7FF\w]/g,
+          function (letter: string) {
+            return letter.toUpperCase();
+          }
+        );
+      const language = req.body.language
+        .toLowerCase()
+        .replace(
+          /^[\u00C0-\u1FFF\u2C00-\uD7FF\w]|\s[\u00C0-\u1FFF\u2C00-\uD7FF\w]/g,
+          function (letter: string) {
+            return letter.toUpperCase();
+          }
+        );
+      const rating = req.body.rating
+        .toLowerCase()
+        .replace(
+          /^[\u00C0-\u1FFF\u2C00-\uD7FF\w]|\s[\u00C0-\u1FFF\u2C00-\uD7FF\w]/g,
+          function (letter: string) {
+            return letter.toUpperCase();
+          }
+        );
+      const startPrice = req.body.startPrice;
+      const endPrice = req.body.endPrice;
+      const sounds = await Course.find({
+        $and: [
+          {
+            isApproved: true,
+          },
+          {
+            title: { $regex: title },
+          },
+          {
+            category: { $regex: category },
+          },
+
+          {
+            courseLevel: { $regex: courseLevel },
+          },
+          {
+            tags: { $regex: tags },
+          },
+          {
+            language: { $regex: language },
+          },
+          {
+            rating: { $regex: rating },
+          },
+          {
+            price: { $gte: startPrice, $lte: endPrice },
+          },
+        ],
+      });
+      if (sounds) {
+        res.status(200).json(sounds);
+      } else {
+        res.status(404).json({
+          message: "No Course Found",
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
 }
 
 export default CourseController;

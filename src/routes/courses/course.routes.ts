@@ -18,4 +18,7 @@ router.put("/update-status/:id", course.updateStatus);
 
 router.delete("/delete-course/:id", course.deleteCourse);
 
+// search course
+router.get("/search", course.searchCourse);
+
 export default router;
