@@ -16,4 +16,4 @@ const emailModel = new mongoose.Schema(
   }
 );
 
-export default mongoose.model("EmailModel", emailModel);
+export default mongoose.model("Subscription", emailModel);

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import MailTemplate from "./mail.model";
-import EmailModel from "./subscribe.model";
+import Subscription from "./subscribe.model";
 import instructorModel from "../instructor/instructor.model";
 import userModel from "../user/user.model";
 import sendEmail from "../../services/email/sendEmail";
@@ -161,7 +161,7 @@ class MailController {
 
   async contactForm(req: Request, res: Response) {
     try {
-      return sendEmail({
+       sendEmail({
         to: "deonicode@gmail.com",
         subject: req.body.subject,
         message: contactMail(
@@ -171,6 +171,9 @@ class MailController {
           req.body.message
         ),
       });
+       res.status(200).json({
+            message: "Email sent successfully",
+          });
     } catch (error) {
       console.error("error sending mail", error);
     }
@@ -178,7 +181,7 @@ class MailController {
 
   async subscribe(req: Request, res: Response) {
     try {
-      const subscriber = new EmailModel({
+      const subscriber = new Subscription({
         username: req.body.username,
         email: req.body.email,
       });

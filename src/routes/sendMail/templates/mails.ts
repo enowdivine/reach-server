@@ -27,9 +27,9 @@ export function contactMail(
   message: any
 ) {
   return `
-            <h3>Username ${username},</h3>
-            <h3>Email address ${email},</h3>
-            <h3>phone number ${phoneNumber},</h3>
+            <p>Username: ${username},</p>
+            <p>Email address: ${email},</p>
+            <p>phone number: ${phoneNumber},</p>
             <p>${message}</p>
   `;
 }
