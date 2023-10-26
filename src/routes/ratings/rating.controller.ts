@@ -64,7 +64,7 @@ class RatingController {
   async ratings(req: Request, res: Response) {
     try {
       const ratings = await Rating.find({
-        courseId: req.params.courseId,
+        courseId: req.params.id,
       });
       if (ratings) {
         return res.status(200).json(ratings);
