@@ -1,5 +1,13 @@
 import { Request, Response } from "express";
 import Withdraw from "./withdraw.model";
+//
+import instructorModel from "../instructor/instructor.model";
+import sendEmail from "../../services/email/sendEmail";
+import {
+  widthdrawalRequest,
+  approveRequest,
+  rejectRequest,
+} from "./templates/emails";
 
 class ChapterController {
   async create(req: Request, res: Response) {
@@ -10,7 +18,16 @@ class ChapterController {
       });
       await withdraw
         .save()
-        .then(() => {
+        .then(async (response) => {
+          const user = await instructorModel.findOne({ _id: req.body.userId });
+          sendEmail({
+            to: "deonicode@gmail.com",
+            subject: `New Withdrawal Request`,
+            message: widthdrawalRequest(
+              user?.username as string,
+              req.body.amount as number
+            ),
+          });
           res.status(201).json({
             message: "request sent",
           });
@@ -82,7 +99,16 @@ class ChapterController {
       const request = await Withdraw.findOne({ _id: req.params.id });
       if (request) {
         request.status = req.body.status;
-        await request.save().then(() => {
+        await request.save().then(async (response) => {
+          const user = await instructorModel.findOne({ _id: response.userId });
+          sendEmail({
+            to: user?.email as string,
+            subject: `Withdrawal Request ${req.body.status}`,
+            message:
+              req.body.status === "approved"
+                ? approveRequest(user?.username as string, req.body.status)
+                : rejectRequest(user?.username as string, req.body.status),
+          });
           return res.status(200).json({
             message: "request status updated",
           });

@@ -2,6 +2,11 @@ import { Request, Response } from "express";
 import Course from "./course.model";
 import UserModel from "../user/user.model";
 import { deleteObject } from "../../middleware/s3/s3";
+//
+import adminModel from "../admin/admin.model";
+import instructorModel from "../instructor/instructor.model";
+import sendEmail from "../../services/email/sendEmail";
+import { courseApproval, courseSuspended } from "./templates/emails";
 
 interface MulterRequest extends Request {
   file: any;
@@ -225,7 +230,31 @@ class CourseController {
       const course = await Course.findOne({ _id: req.params.id });
       if (course) {
         course.isApproved = !course.isApproved;
-        await course.save().then(() => {
+        await course.save().then(async () => {
+          const admin = await adminModel.findOne({
+            _id: course.instructorId,
+          });
+          const instructor = await instructorModel.findOne({
+            _id: course.instructorId,
+          });
+          sendEmail({
+            to:
+              admin === null
+                ? (instructor?.email as string)
+                : (admin.email as string),
+            subject: course.isApproved
+              ? `${course.title} Approved`
+              : `${course.title} Suspended`,
+            message: course.isApproved
+              ? courseApproval(
+                  admin === null ? (instructor?.username as string) : "Admin",
+                  course?.title as string
+                )
+              : courseSuspended(
+                  admin === null ? (instructor?.username as string) : "Admin",
+                  course?.title as string
+                ),
+          });
           return res.status(200).json({
             message: "course status updated",
           });

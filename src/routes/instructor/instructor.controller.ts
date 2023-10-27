@@ -6,7 +6,12 @@ import Instructor from "./instructor.model";
 import AdminModel from "../admin/admin.model";
 import sendEmail from "../../services/email/sendEmail";
 import { deleteObject } from "../../middleware/s3/s3";
-import { welcomeEmail } from "./templates/welcomeEmail";
+import {
+  welcomeEmail,
+  accountActivated,
+  accountSuspended,
+  accountDeactivated,
+} from "./templates/welcomeEmail";
 
 class InstructorController {
   async register(req: Request, res: Response) {
@@ -423,7 +428,17 @@ class InstructorController {
       const user = await Instructor.findOne({ _id: req.params.id });
       if (user) {
         user.status = req.body.status;
-        await user.save().then((response) => {
+        await user.save().then(() => {
+          sendEmail({
+            to: user?.email as string,
+            subject: `Account ${req.body.status}`,
+            message:
+              req.body.status === "active"
+                ? accountActivated(user?.username as string, req.body.status)
+                : req.body.status === "suspended"
+                ? accountSuspended(user?.username as string, req.body.status)
+                : accountDeactivated(user?.username as string, req.body.status),
+          });
           return res.status(200).json({
             message: "instructor status updated",
           });

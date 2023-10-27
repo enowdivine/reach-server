@@ -9,6 +9,9 @@ import {
   welcomeEmail,
   emailVerification,
   forgotPasswordEmail,
+  accountActivated,
+  accountSuspended,
+  accountDeactivated,
 } from "./templates/emails";
 
 class UserController {
@@ -533,6 +536,16 @@ class UserController {
       if (user) {
         user.status = req.body.status;
         await user.save().then(() => {
+          sendEmail({
+            to: user?.email as string,
+            subject: `Account ${req.body.status}`,
+            message:
+              req.body.status === "active"
+                ? accountActivated(user?.username as string, req.body.status)
+                : req.body.status === "suspended"
+                ? accountSuspended(user?.username as string, req.body.status)
+                : accountDeactivated(user?.username as string, req.body.status),
+          });
           return res.status(200).json({
             message: "user status updated",
           });
