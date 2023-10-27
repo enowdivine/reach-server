@@ -1,8 +1,10 @@
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import Discount from "./discount.model";
-// import sendEmail from "../../services/email/sendEmail";
-// import { generalMail } from "./templates/mails";
+import instructorModel from "../instructor/instructor.model";
+import userModel from "../user/user.model";
+import sendEmail from "../../services/email/sendEmail";
+import { discountMail } from "./templates/mails";
 
 class MailController {
   async createDiscount(req: Request, res: Response) {
@@ -29,11 +31,39 @@ class MailController {
 
       await discount
         .save()
-        .then((response) => {
-          res.status(201).json({
-            message: "discount created",
-            response,
-          });
+        .then(async (response) => {
+          const instructors = await instructorModel.find({});
+          const users = await userModel.find({});
+          if (instructors.length > 0 && users.length > 0) {
+            instructors.map((item) => {
+              return sendEmail({
+                to: item.email as string,
+                subject: "New Discount Rate",
+                message: discountMail(
+                  item.username as string,
+                  req.body.message
+                ),
+              });
+            });
+            users.map((item) => {
+              return sendEmail({
+                to: item.email as string,
+                subject: "New Discount Rate",
+                message: discountMail(
+                  item.username as string,
+                  req.body.message
+                ),
+              });
+            });
+            res.status(201).json({
+              message: "discount created",
+              response,
+            });
+          } else {
+            res.status(400).json({
+              message: "error sending mails",
+            });
+          }
         })
         .catch((err) => {
           res.status(500).json({
