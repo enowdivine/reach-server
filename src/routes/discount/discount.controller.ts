@@ -39,20 +39,14 @@ class MailController {
               return sendEmail({
                 to: item.email as string,
                 subject: "New Discount Rate",
-                message: discountMail(
-                  item.username as string,
-                  req.body.message
-                ),
+                message: discountMail(item.username as string, req.body.amount),
               });
             });
             users.map((item) => {
               return sendEmail({
                 to: item.email as string,
                 subject: "New Discount Rate",
-                message: discountMail(
-                  item.username as string,
-                  req.body.message
-                ),
+                message: discountMail(item.username as string, req.body.amount),
               });
             });
             res.status(201).json({

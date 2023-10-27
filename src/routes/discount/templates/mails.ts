@@ -1,4 +1,4 @@
-export function discountMail(username: string, message: any) {
+export function discountMail(username: string, price: any) {
   return `
             <h3>Hi ${username},</h3>
             <p>
@@ -9,7 +9,7 @@ export function discountMail(username: string, message: any) {
             </p>
             <p>
             Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officiis nesciunt
-            <a href="${message}">Click here</a>
+            <h3>${price}</h3>
             </p>
             <p>
             Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officiis nesciunt
