@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express, { json, Request, Response, Router } from "express";
 import bodyParser = require("body-parser");
 import dbConnect from "./config/db";
 import dotenv from "dotenv";
@@ -20,7 +20,7 @@ import transactionRoutes from "./routes/transactions/transaction.routes";
 import questionsRoutes from "./routes/questionsAndAnswers/question.routes";
 import announcementRoutes from "./routes/announcements/announcement.routes";
 // Fapshi imports
-import fapshi from "./routes/fapshi/fapshi.routes";
+const fapshi = require("./routes/fapshi/fapshi");
 
 const corsOptions = {
   origin: "*",
@@ -30,6 +30,14 @@ const corsOptions = {
 
 dotenv.config();
 const app = express();
+const server: any = http.createServer(app);
+const io = require("socket.io")(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+});
 dbConnect();
 
 app.use(cors(corsOptions));
@@ -51,14 +59,56 @@ app.use(`/api/${process.env.API_VERSION}/withdrawals`, withdrawalRoutes);
 app.use(`/api/${process.env.API_VERSION}/transaction`, transactionRoutes);
 app.use(`/api/${process.env.API_VERSION}/announcement`, announcementRoutes);
 // Fapshi webhook
-app.use(`/api/${process.env.API_VERSION}/webhook`, fapshi);
+// app.use(`/api/${process.env.API_VERSION}/webhook`, fapshi);
+let socketID: any;
+io.on("connection", async (socket: any) => {
+  console.log("New participant connected");
+  socket.on("join", (room: any) => {
+    socket.join(room);
+    socketID = socket.id;
+    console.log(`${socket.id} joined ${room}`);
+  });
+});
+
+app.post("/fapshi-webhook", json(), async (req: Request, res: Response) => {
+  // Get the transaction status from fapshi's API to be sure of its source
+  const event = await fapshi.paymentStatus(req.body.transId);
+
+  if (event.statusCode !== 200)
+    return res.status(400).send({ message: event.message });
+
+  // Handle the event
+  switch (event.status) {
+    case "SUCCESSFUL":
+      // Then define and call a function to handle a SUCCESSFUL payment
+      console.log(event, "successful");
+      io.to(socketID).emit("status", event.status);
+      break;
+    case "FAILED":
+      // Then define and call a function to handle a FAILED payment
+      console.log(event, "failed");
+      io.to(socketID).emit("status", event.status);
+      break;
+    case "EXPIRED":
+      // Then define and call a function to handle an expired transaction
+      console.log(event, "expired");
+      io.to(socketID).emit("status", event.status);
+      break;
+    // ... handle other event types
+    default:
+      console.log(`Unhandled event status: ${event.type}`);
+      io.to(socketID).emit("status", event.status);
+  }
+
+  // Return a 200 response to acknowledge receipt of the event
+  res.send();
+});
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Deonicode Server 🚀");
 });
 
 const PORT: any = process.env.PORT || 5000;
-const server: any = http.createServer(app);
 server.listen(PORT, () => {
   console.log(`server listening on port ${PORT}, 🚀`);
 });
