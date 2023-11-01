@@ -102,7 +102,7 @@ app.post(
     //     io.to(socketID).emit("status", event);
     // }
 
-    io.to(socketID).emit("request body", req.body);
+    io.to(socketID).emit("request body", req.query);
     // Return a 200 response to acknowledge receipt of the event
     res.send();
   }
