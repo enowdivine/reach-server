@@ -77,7 +77,7 @@ app.post(
     const event = await fapshi.paymentStatus(req.body.transId);
 
     const status = req.query;
-    io.to(socketID).emit("status", { event, status });
+    io.to(socketID).emit("status", req.body);
 
     if (event.statusCode !== 200)
       return res.status(400).send({ message: event.message });
