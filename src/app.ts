@@ -1,4 +1,4 @@
-import express, { json, Request, Response, Router } from "express";
+import express, { Request, Response } from "express";
 import bodyParser = require("body-parser");
 import dbConnect from "./config/db";
 import dotenv from "dotenv";
@@ -77,9 +77,6 @@ app.post(
     // Get the transaction status from fapshi's API to be sure of its source
     const event = await fapshi.paymentStatus(req.body.transId);
 
-    const status = req.query;
-    io.to(socketID).emit("status", req.body);
-
     if (event.statusCode !== 200)
       return res.status(400).send({ message: event.message });
 
@@ -103,10 +100,9 @@ app.post(
       // ... handle other event types
       default:
         console.log(`Unhandled event status: ${event.type}`);
-        io.to(socketID).emit("status", event.status);
+        io.to(socketID).emit("status", event);
     }
 
-    io.to(socketID).emit("status", event);
     // Return a 200 response to acknowledge receipt of the event
     res.send();
   }
