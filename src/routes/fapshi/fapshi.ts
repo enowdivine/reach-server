@@ -100,13 +100,13 @@ module.exports = {
   /**
    * This function returns an object containing the details of the transaction associated with the Id passed as parameter
    */
-  paymentStatus(transId: any) {
+  paymentStatus(transId: string) {
     return new Promise(async function (resolve) {
       try {
-        // if (!transId || typeof transId !== "string")
-        //   resolve(error("invalid type, string expected", 400));
-        // if (!/^[a-zA-Z0-9]{8,9}$/.test(transId))
-        //   resolve(error("invalid transaction id", 400));
+        if (!transId || typeof transId !== "string")
+          resolve(error("invalid type, string expected", 400));
+        if (!/^[a-zA-Z0-9]{8,9}$/.test(transId))
+          resolve(error("invalid transaction id", 400));
 
         const config = {
           method: "get",
