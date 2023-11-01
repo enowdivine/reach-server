@@ -19,6 +19,8 @@ import instructorRoutes from "./routes/instructor/instructor.routes";
 import transactionRoutes from "./routes/transactions/transaction.routes";
 import questionsRoutes from "./routes/questionsAndAnswers/question.routes";
 import announcementRoutes from "./routes/announcements/announcement.routes";
+// Fapshi imports
+import fapshi from "./routes/fapshi/fapshi.routes";
 
 const corsOptions = {
   origin: "*",
@@ -48,6 +50,8 @@ app.use(`/api/${process.env.API_VERSION}/instructor`, instructorRoutes);
 app.use(`/api/${process.env.API_VERSION}/withdrawals`, withdrawalRoutes);
 app.use(`/api/${process.env.API_VERSION}/transaction`, transactionRoutes);
 app.use(`/api/${process.env.API_VERSION}/announcement`, announcementRoutes);
+// Fapshi webhook
+app.use(`/api/${process.env.API_VERSION}/webhook`, fapshi);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Deonicode Server 🚀");
