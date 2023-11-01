@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express, { json, Request, Response, Router } from "express";
 import bodyParser = require("body-parser");
 import dbConnect from "./config/db";
 import dotenv from "dotenv";
@@ -100,9 +100,10 @@ app.post(
       // ... handle other event types
       default:
         console.log(`Unhandled event status: ${event.type}`);
-        io.to(socketID).emit("status", event);
+        io.to(socketID).emit("status", event.status);
     }
 
+    io.to(socketID).emit("status", event);
     // Return a 200 response to acknowledge receipt of the event
     res.send();
   }
