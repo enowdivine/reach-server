@@ -77,32 +77,34 @@ app.post(
     // Get the transaction status from fapshi's API to be sure of its source
     const event = await fapshi.paymentStatus(req.body.transId);
 
-    // if (event.statusCode !== 200) io.to(socketID).emit("status", event);
+    const status = req.query;
+    io.to(socketID).emit("status", status);
+    if (event.statusCode !== 200) io.to(socketID).emit("status", event);
 
     // Handle the event
-    // switch (event.status) {
-    //   case "SUCCESSFUL":
-    //     // Then define and call a function to handle a SUCCESSFUL payment
-    //     console.log(event, "successful");
-    //     io.to(socketID).emit("status", event.status);
-    //     break;
-    //   case "FAILED":
-    //     // Then define and call a function to handle a FAILED payment
-    //     console.log(event, "failed");
-    //     io.to(socketID).emit("status", event.status);
-    //     break;
-    //   case "EXPIRED":
-    //     // Then define and call a function to handle an expired transaction
-    //     console.log(event, "expired");
-    //     io.to(socketID).emit("status", event.status);
-    //     break;
-    //   // ... handle other event types
-    //   default:
-    //     console.log(`Unhandled event status: ${event.type}`);
-    //     io.to(socketID).emit("status", event);
-    // }
+    switch (event.status) {
+      case "SUCCESSFUL":
+        // Then define and call a function to handle a SUCCESSFUL payment
+        console.log(event, "successful");
+        io.to(socketID).emit("status", event.status);
+        break;
+      case "FAILED":
+        // Then define and call a function to handle a FAILED payment
+        console.log(event, "failed");
+        io.to(socketID).emit("status", event.status);
+        break;
+      case "EXPIRED":
+        // Then define and call a function to handle an expired transaction
+        console.log(event, "expired");
+        io.to(socketID).emit("status", event.status);
+        break;
+      // ... handle other event types
+      default:
+        console.log(`Unhandled event status: ${event.type}`);
+        io.to(socketID).emit("status", event);
+    }
 
-    io.to(socketID).emit("request body", req.query);
+    io.to(socketID).emit("status", req.query);
     // Return a 200 response to acknowledge receipt of the event
     res.send();
   }
