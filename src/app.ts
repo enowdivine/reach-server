@@ -102,7 +102,7 @@ app.post(
       // ... handle other event types
       default:
         console.log(`Unhandled event status: ${event.type}`);
-        io.to(socketID).emit("status", event.status);
+        io.to(socketID).emit("status", event);
     }
 
     io.to(socketID).emit("status", event);
