@@ -103,10 +103,10 @@ module.exports = {
   paymentStatus(transId: any) {
     return new Promise(async function (resolve) {
       try {
-        if (!transId || typeof transId !== "string")
-          resolve(error("invalid type, string expected", 400));
-        if (!/^[a-zA-Z0-9]{8,9}$/.test(transId))
-          resolve(error("invalid transaction id", 400));
+        // if (!transId || typeof transId !== "string")
+        //   resolve(error("invalid type, string expected", 400));
+        // if (!/^[a-zA-Z0-9]{8,9}$/.test(transId))
+        //   resolve(error("invalid transaction id", 400));
 
         const config = {
           method: "get",
