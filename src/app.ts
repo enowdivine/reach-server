@@ -70,40 +70,44 @@ io.on("connection", async (socket: any) => {
   });
 });
 
-app.post("/fapshi-webhook", json(), async (req: Request, res: Response) => {
-  // Get the transaction status from fapshi's API to be sure of its source
-  const event = await fapshi.paymentStatus(req.body.transId);
-  console.log("webhook");
+app.post(
+  `/api/${process.env.API_VERSION}/webhook/fapshi-webhook`,
+  json(),
+  async (req: Request, res: Response) => {
+    // Get the transaction status from fapshi's API to be sure of its source
+    const event = await fapshi.paymentStatus(req.body.transId);
+    console.log("webhook");
 
-  if (event.statusCode !== 200)
-    return res.status(400).send({ message: event.message });
+    if (event.statusCode !== 200)
+      return res.status(400).send({ message: event.message });
 
-  // Handle the event
-  switch (event.status) {
-    case "SUCCESSFUL":
-      // Then define and call a function to handle a SUCCESSFUL payment
-      console.log(event, "successful");
-      io.to(socketID).emit("status", event.status);
-      break;
-    case "FAILED":
-      // Then define and call a function to handle a FAILED payment
-      console.log(event, "failed");
-      io.to(socketID).emit("status", event.status);
-      break;
-    case "EXPIRED":
-      // Then define and call a function to handle an expired transaction
-      console.log(event, "expired");
-      io.to(socketID).emit("status", event.status);
-      break;
-    // ... handle other event types
-    default:
-      console.log(`Unhandled event status: ${event.type}`);
-      io.to(socketID).emit("status", event.status);
+    // Handle the event
+    switch (event.status) {
+      case "SUCCESSFUL":
+        // Then define and call a function to handle a SUCCESSFUL payment
+        console.log(event, "successful");
+        io.to(socketID).emit("status", event.status);
+        break;
+      case "FAILED":
+        // Then define and call a function to handle a FAILED payment
+        console.log(event, "failed");
+        io.to(socketID).emit("status", event.status);
+        break;
+      case "EXPIRED":
+        // Then define and call a function to handle an expired transaction
+        console.log(event, "expired");
+        io.to(socketID).emit("status", event.status);
+        break;
+      // ... handle other event types
+      default:
+        console.log(`Unhandled event status: ${event.type}`);
+        io.to(socketID).emit("status", event.status);
+    }
+
+    // Return a 200 response to acknowledge receipt of the event
+    res.send();
   }
-
-  // Return a 200 response to acknowledge receipt of the event
-  res.send();
-});
+);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Deonicode Server 🚀");
