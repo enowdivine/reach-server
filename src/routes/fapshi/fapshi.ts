@@ -100,17 +100,17 @@ module.exports = {
   /**
    * This function returns an object containing the details of the transaction associated with the Id passed as parameter
    */
-  paymentStatus(transId: any) {
+  paymentStatus(data: any) {
     return new Promise(async function (resolve) {
       try {
-        if (!transId || typeof transId !== "string")
+        if (!data.transId || typeof data.transId !== "string")
           resolve(error("invalid type, string expected", 400));
-        if (!/^[a-zA-Z0-9]{8,9}$/.test(transId))
+        if (!/^[a-zA-Z0-9]{8,9}$/.test(data.transId))
           resolve(error("invalid transaction id", 400));
 
         const config = {
           method: "get",
-          url: baseUrl + "/payment-status/" + transId,
+          url: baseUrl + "/payment-status/" + data.transId,
           headers: headers,
         };
         const response = await axios(config);
