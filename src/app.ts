@@ -76,7 +76,7 @@ app.post(
   express.json(),
   async (req: Request, res: Response) => {
     // Get the transaction status from fapshi's API to be sure of its source
-    const event = await fapshi.paymentStatus(req.body);
+    const event = await fapshi.paymentStatus(req.body.transId);
 
     if (event.statusCode !== 200) {
       return io.to(socketID).emit("status", event);
