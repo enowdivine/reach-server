@@ -100,7 +100,7 @@ module.exports = {
   /**
    * This function returns an object containing the details of the transaction associated with the Id passed as parameter
    */
-  paymentStatus(transId: string) {
+  paymentStatus(transId: any) {
     return new Promise(async function (resolve) {
       try {
         if (!transId || typeof transId !== "string")
