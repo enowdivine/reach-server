@@ -6,7 +6,6 @@ import _ from "lodash";
 
 class TransactionController {
   async create(req: Request, res: Response) {
-    console.log(req.body);
     try {
       const transaction = new Transaction({
         courseId: req.body.courseId,
