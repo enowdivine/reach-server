@@ -72,7 +72,6 @@ io.on("connection", async (socket: any) => {
 
 app.post(
   `/api/${process.env.API_VERSION}/webhook/fapshi-webhook`,
-  express.json(),
   async (req: Request, res: Response) => {
     // Get the transaction status from fapshi's API to be sure of its source
     const event = await fapshi.paymentStatus(req.body.transId);
