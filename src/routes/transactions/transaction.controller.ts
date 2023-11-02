@@ -11,9 +11,19 @@ class TransactionController {
         courseId: req.body.courseId,
         userId: req.body.userId,
         instructorId: req.body.instructorId,
+        transactionId: req.body.transId,
+        financialTransId: req.body.financialTransId,
         amount: req.body.amount,
-        paymentMethod: req.body.paymentMethod,
+        revenue: req.body.revenue,
+        phonenumber: req.body.phone,
+        username: req.body.name,
+        email: req.body.email,
+        paymentMethod: req.body.medium,
         status: req.body.status,
+        statusCode: req.body.statusCode,
+        webhook: req.body.webhook,
+        dateInitiated: req.body.dateInitiated,
+        dateConfirmed: req.body.dateConfirmed,
       });
       await transaction
         .save()

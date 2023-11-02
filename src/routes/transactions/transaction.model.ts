@@ -14,9 +14,33 @@ const transaction = new mongoose.Schema(
       type: String,
       required: [true, "instructorId is reuired"],
     },
+    transactionId: {
+      type: String,
+      required: [true, "transactionId is reuired"],
+    },
+    financialTransId: {
+      type: String,
+      required: [true, "financialTransId is reuired"],
+    },
     amount: {
       type: Number,
       required: [true, "amount is reuired"],
+    },
+    revenue: {
+      type: Number,
+      required: [true, "revenue is reuired"],
+    },
+    username: {
+      type: String,
+      required: [true, "username is reuired"],
+    },
+    email: {
+      type: String,
+      required: [true, "email is reuired"],
+    },
+    phonenumber: {
+      type: String,
+      required: [true, "phonenumber is reuired"],
     },
     paymentMethod: {
       type: String,
@@ -24,7 +48,23 @@ const transaction = new mongoose.Schema(
     },
     status: {
       type: String,
-      default: "pending",
+      required: [true, "status method is reuired"],
+    },
+    statusCode: {
+      type: String,
+      required: [true, "statusCode method is reuired"],
+    },
+    webhook: {
+      type: String,
+      required: [true, "webhook method is reuired"],
+    },
+    dateInitiated: {
+      type: Date,
+      required: [true, "dateInitiated method is reuired"],
+    },
+    dateConfirmed: {
+      type: Date,
+      required: [true, "dateConfirmed method is reuired"],
     },
   },
   {
