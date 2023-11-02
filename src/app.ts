@@ -1,4 +1,4 @@
-import express, { json, Request, Response, Router } from "express";
+import express, { Request, Response } from "express";
 import bodyParser = require("body-parser");
 import dbConnect from "./config/db";
 import dotenv from "dotenv";
@@ -58,6 +58,7 @@ app.use(`/api/${process.env.API_VERSION}/instructor`, instructorRoutes);
 app.use(`/api/${process.env.API_VERSION}/withdrawals`, withdrawalRoutes);
 app.use(`/api/${process.env.API_VERSION}/transaction`, transactionRoutes);
 app.use(`/api/${process.env.API_VERSION}/announcement`, announcementRoutes);
+
 // Fapshi webhook
 // app.use(`/api/${process.env.API_VERSION}/webhook`, fapshi);
 let socketID: any;
@@ -72,6 +73,7 @@ io.on("connection", async (socket: any) => {
 
 app.post(
   `/api/${process.env.API_VERSION}/webhook/fapshi-webhook`,
+  express.json(),
   async (req: Request, res: Response) => {
     // Get the transaction status from fapshi's API to be sure of its source
     const event = await fapshi.paymentStatus(req.body.transId);
