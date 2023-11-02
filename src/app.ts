@@ -60,7 +60,6 @@ app.use(`/api/${process.env.API_VERSION}/transaction`, transactionRoutes);
 app.use(`/api/${process.env.API_VERSION}/announcement`, announcementRoutes);
 
 // Fapshi webhook
-// app.use(`/api/${process.env.API_VERSION}/webhook`, fapshi);
 let socketID: any;
 io.on("connection", async (socket: any) => {
   console.log("New participant connected");
