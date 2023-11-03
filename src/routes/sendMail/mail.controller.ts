@@ -161,7 +161,7 @@ class MailController {
 
   async contactForm(req: Request, res: Response) {
     try {
-       sendEmail({
+      sendEmail({
         to: "deonicode@gmail.com",
         subject: req.body.subject,
         message: contactMail(
@@ -171,9 +171,9 @@ class MailController {
           req.body.message
         ),
       });
-       res.status(200).json({
-            message: "Email sent successfully",
-          });
+      res.status(200).json({
+        message: "Email sent successfully",
+      });
     } catch (error) {
       console.error("error sending mail", error);
     }
@@ -181,6 +181,12 @@ class MailController {
 
   async subscribe(req: Request, res: Response) {
     try {
+      const mail = await Subscription.findOne({ email: req.body.email });
+      if (mail) {
+        return res.status(409).json({
+          message: "email already exist",
+        });
+      }
       const subscriber = new Subscription({
         username: req.body.username,
         email: req.body.email,
