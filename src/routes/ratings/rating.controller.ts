@@ -22,9 +22,9 @@ class RatingController {
           if (courseRatings && courseRatings.length > 0) {
             let count = 0;
             let sum = 0;
-            courseRatings.forEach((item: any, index) => {
+            courseRatings.forEach((item: any, index: any) => {
               count += item.rating;
-              sum += item.rating * (index + 1);
+              return (sum += item.rating * (index + 1));
             });
             const newRate = sum / count;
 
