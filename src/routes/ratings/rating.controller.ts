@@ -21,13 +21,11 @@ class RatingController {
           // calculate rating
           if (courseRatings && courseRatings.length > 0) {
             let count = 0;
-            let sum = 0;
-            courseRatings.forEach((item: any, index: any) => {
-              count += item.rating;
-              return (sum += item.rating * (index + 1));
+            courseRatings.forEach((item: any) => {
+              return (count += item.rating);
             });
-            const newRate = sum / count;
-
+            const newRate =
+              Math.round((count / courseRatings.length) * 10) / 10;
             // course update
             const course = await courseModel.updateOne(
               {
