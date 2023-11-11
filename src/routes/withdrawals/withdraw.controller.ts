@@ -100,6 +100,13 @@ class ChapterController {
       if (request) {
         request.status = req.body.status;
         await request.save().then(async (response) => {
+          if (req.body.status === "approved") {
+            instructorModel.updateOne(
+              { _id: response.userId },
+              { $inc: { totalRevenue: -!response.amount } }
+            );
+          }
+
           const user = await instructorModel.findOne({ _id: response.userId });
           sendEmail({
             to: user?.email as string,
