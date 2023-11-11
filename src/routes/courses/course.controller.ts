@@ -7,6 +7,7 @@ import adminModel from "../admin/admin.model";
 import instructorModel from "../instructor/instructor.model";
 import sendEmail from "../../services/email/sendEmail";
 import { courseApproval, courseSuspended } from "./templates/emails";
+import slugify from "../../helpers/slugify";
 
 interface MulterRequest extends Request {
   file: any;
@@ -289,54 +290,13 @@ class CourseController {
   async searchCourse(req: Request, res: Response) {
     try {
       const data = JSON.parse(req.params.data);
-      const title = data.title
-        .toLowerCase()
-        .replace(
-          /^[\u00C0-\u1FFF\u2C00-\uD7FF\w]|\s[\u00C0-\u1FFF\u2C00-\uD7FF\w]/g,
-          function (letter: string) {
-            return letter.toUpperCase();
-          }
-        );
-      const category = data.category
-        .toLowerCase()
-        .replace(
-          /^[\u00C0-\u1FFF\u2C00-\uD7FF\w]|\s[\u00C0-\u1FFF\u2C00-\uD7FF\w]/g,
-          function (letter: string) {
-            return letter.toUpperCase();
-          }
-        );
-      const courseLevel = data.courseLevel
-        .toLowerCase()
-        .replace(
-          /^[\u00C0-\u1FFF\u2C00-\uD7FF\w]|\s[\u00C0-\u1FFF\u2C00-\uD7FF\w]/g,
-          function (letter: string) {
-            return letter.toUpperCase();
-          }
-        );
-      const tags = data.tags
-        .toLowerCase()
-        .replace(
-          /^[\u00C0-\u1FFF\u2C00-\uD7FF\w]|\s[\u00C0-\u1FFF\u2C00-\uD7FF\w]/g,
-          function (letter: string) {
-            return letter.toUpperCase();
-          }
-        );
-      const language = data.language
-        .toLowerCase()
-        .replace(
-          /^[\u00C0-\u1FFF\u2C00-\uD7FF\w]|\s[\u00C0-\u1FFF\u2C00-\uD7FF\w]/g,
-          function (letter: string) {
-            return letter.toUpperCase();
-          }
-        );
-      const rating = data.rating
-        .toLowerCase()
-        .replace(
-          /^[\u00C0-\u1FFF\u2C00-\uD7FF\w]|\s[\u00C0-\u1FFF\u2C00-\uD7FF\w]/g,
-          function (letter: string) {
-            return letter.toUpperCase();
-          }
-        );
+      const title = slugify(data.title);
+      const category = slugify(data.category);
+      const courseLevel = slugify(data.courseLevel);
+      const tags = slugify(data.tags);
+      const language = slugify(data.language);
+      const rating = slugify(data.rating);
+
       const startPrice = data.startPrice;
       const endPrice = data.endPrice;
       const courses = await Course.find({
