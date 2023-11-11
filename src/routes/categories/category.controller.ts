@@ -1,10 +1,12 @@
 import { Request, Response } from "express";
 import Category from "./category.model";
+import slugify from "../../helpers/slugify";
 
 class CategoryController {
   async create(req: Request, res: Response) {
     try {
-      const course = new Category({ title: req.body.title });
+      const slug = slugify(req.body.title);
+      const course = new Category({ title: req.body.title, slug: slug });
       await course
         .save()
         .then(() => {
