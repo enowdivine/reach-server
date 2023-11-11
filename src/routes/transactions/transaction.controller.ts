@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import Transaction from "./transaction.model";
 import userModel from "../user/user.model";
+import instructorModel from "../instructor/instructor.model";
 import courseModel from "../courses/course.model";
 import _ from "lodash";
 
@@ -39,7 +40,11 @@ class TransactionController {
                 { _id: req.body.userId },
                 { $push: { purchasedCourses: req.body.courseId } }
               );
-              if (user.acknowledged) {
+              const instructor = await instructorModel.updateOne(
+                { _id: req.body.instructorId },
+                { $inc: { totalRevenue: req.body.revenue } }
+              );
+              if (user.acknowledged && instructor.acknowledged) {
                 res.status(201).json({
                   message: "Successful",
                 });

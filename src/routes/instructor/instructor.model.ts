@@ -58,6 +58,10 @@ const instructor = new mongoose.Schema(
       type: String,
       default: "pending",
     },
+    totalRevenue: {
+      type: Number,
+      default: 0,
+    },
     // socials
     facebook: {
       type: String,
