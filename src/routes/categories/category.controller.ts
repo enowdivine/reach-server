@@ -6,8 +6,14 @@ class CategoryController {
   async create(req: Request, res: Response) {
     try {
       const slug = slugify(req.body.title);
-      const course = new Category({ title: req.body.title, slug: slug });
-      await course
+      const cat = await Category.findOne({ slug: slug });
+      if (cat) {
+        return res.status(409).json({
+          message: "category already exist",
+        });
+      }
+      const category = new Category({ title: req.body.title, slug: slug });
+      await category
         .save()
         .then(() => {
           res.status(201).json({
