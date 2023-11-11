@@ -10,6 +10,10 @@ const course = new mongoose.Schema(
       type: String,
       required: [true, "title is required"],
     },
+    slug: {
+      type: String,
+      required: [true, "slug is required"],
+    },
     introVideoUrl: {
       type: String,
       default: "",
