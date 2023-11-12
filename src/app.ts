@@ -44,6 +44,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
 app.use(`/api/${process.env.API_VERSION}/user`, userRoutes);
 app.use(`/api/${process.env.API_VERSION}/admin`, adminRoutes);
 app.use(`/api/${process.env.API_VERSION}/course`, courseRoutes);
@@ -72,6 +73,7 @@ io.on("connection", async (socket: any) => {
 
 app.post(
   `/api/${process.env.API_VERSION}/webhook/fapshi-webhook`,
+  cors(corsOptions),
   express.json(),
   async (req: Request, res: Response) => {
     // Get the transaction status from fapshi's API to be sure of its source
