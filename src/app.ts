@@ -23,7 +23,7 @@ import announcementRoutes from "./routes/announcements/announcement.routes";
 const fapshi = require("./routes/fapshi/fapshi");
 
 const corsOptions = {
-  origin: "https://deonicodelearners.netlify.app/",
+  origin: "*",
   credentials: true,
   optionSuccessStatus: 200,
 };
