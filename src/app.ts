@@ -23,7 +23,7 @@ import announcementRoutes from "./routes/announcements/announcement.routes";
 const fapshi = require("./routes/fapshi/fapshi");
 
 const corsOptions = {
-  origin: "*",
+  origin: ["https://deonicodelearners.netlify.app/", "*"],
   credentials: true,
   optionSuccessStatus: 200,
 };
@@ -73,7 +73,6 @@ io.on("connection", async (socket: any) => {
 
 app.post(
   `/api/${process.env.API_VERSION}/webhook/fapshi-webhook`,
-  cors(corsOptions),
   express.json(),
   async (req: Request, res: Response) => {
     // Get the transaction status from fapshi's API to be sure of its source
