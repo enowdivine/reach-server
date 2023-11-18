@@ -15,9 +15,10 @@ class CategoryController {
       const category = new Category({ title: req.body.title, slug: slug });
       await category
         .save()
-        .then(() => {
+        .then((response) => {
           res.status(201).json({
             message: "category created",
+            response,
           });
         })
         .catch((err) => {
