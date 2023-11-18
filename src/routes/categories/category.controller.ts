@@ -80,6 +80,10 @@ class CategoryController {
     if (lesson.acknowledged) {
       res.status(200).json({
         message: "update successful",
+        response: {
+          id: req.params.id,
+          lesson,
+        },
       });
     } else {
       res.status(404).json({
@@ -94,6 +98,10 @@ class CategoryController {
       if (response.deletedCount > 0) {
         res.status(200).json({
           message: "category deleted",
+          response: {
+            id: req.params.id,
+            response,
+          },
         });
       } else {
         res.status(404).json({
