@@ -67,6 +67,7 @@ class CategoryController {
   }
 
   async update(req: Request, res: Response) {
+    const slug = slugify(req.body.title);
     const category = await Category.updateOne(
       {
         _id: req.params.id,
@@ -74,6 +75,7 @@ class CategoryController {
       {
         $set: {
           title: req.body.title,
+          slug: slug,
         },
       }
     );
