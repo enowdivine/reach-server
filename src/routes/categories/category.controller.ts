@@ -67,7 +67,7 @@ class CategoryController {
   }
 
   async update(req: Request, res: Response) {
-    const lesson = await Category.updateOne(
+    const category = await Category.updateOne(
       {
         _id: req.params.id,
       },
@@ -77,13 +77,11 @@ class CategoryController {
         },
       }
     );
-    if (lesson.acknowledged) {
+    if (category.acknowledged) {
+      const updated = await Category.findOne({ _id: req.params.id });
       res.status(200).json({
         message: "update successful",
-        response: {
-          id: req.params.id,
-          lesson,
-        },
+        updated,
       });
     } else {
       res.status(404).json({
