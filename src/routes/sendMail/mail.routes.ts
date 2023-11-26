@@ -14,5 +14,6 @@ router.delete("/delete-template/:id", mail.deleteTemplate);
 router.post("/contact-form", mail.contactForm);
 // subscription routes
 router.post("/subscribe", mail.subscribe);
+router.get("/subscribers", mail.subsribers);
 
 export default router;

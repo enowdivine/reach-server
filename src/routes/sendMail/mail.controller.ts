@@ -208,6 +208,21 @@ class MailController {
       console.error("an error occured", error);
     }
   }
+
+  async subsribers(req: Request, res: Response) {
+    try {
+      const subsccribers = await Subscription.find({}).sort({ createdAt: -1 });
+      if (subsccribers) {
+        return res.status(200).json(subsccribers);
+      } else {
+        return res.status(404).json({
+          message: "no subscriber found",
+        });
+      }
+    } catch (error) {
+      console.error("error fetching subsccribers", error);
+    }
+  }
 }
 
 export default MailController;
