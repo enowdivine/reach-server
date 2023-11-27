@@ -15,7 +15,6 @@ const lesson = new mongoose.Schema(
     },
     loomLink: {
       type: String,
-      default: "",
     },
     loomType: {
       type: Boolean,
