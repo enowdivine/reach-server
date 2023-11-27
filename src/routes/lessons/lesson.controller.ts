@@ -44,6 +44,33 @@ class CourseController {
     }
   }
 
+  async createLoomLesson(req: Request, res: Response) {
+    try {
+      const course = new Lesson({
+        chapterId: req.body.chapterId,
+        title: req.body.title,
+        duration: req.body.duration,
+        loomLink: req.body.loomLink,
+        loomType: true,
+      });
+      await course
+        .save()
+        .then(() => {
+          res.status(201).json({
+            message: "lesson created",
+          });
+        })
+        .catch((err) => {
+          res.status(500).json({
+            message: "error creating lesson",
+            error: err,
+          });
+        });
+    } catch (error) {
+      console.error("error creating lesson", error);
+    }
+  }
+
   async lesson(req: Request, res: Response) {
     try {
       const lesson = await Lesson.findOne({ _id: req.params.id });

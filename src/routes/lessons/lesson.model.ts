@@ -12,7 +12,14 @@ const lesson = new mongoose.Schema(
     },
     content: {
       type: Object,
-      required: [true, "content is required"],
+    },
+    loomLink: {
+      type: String,
+      default: "",
+    },
+    loomType: {
+      type: Boolean,
+      default: false,
     },
     duration: {
       type: Number,
