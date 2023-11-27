@@ -168,6 +168,34 @@ class CourseController {
     }
   }
 
+  async updateLoomLesson(req: Request, res: Response) {
+    try {
+      const updatedLesson = await Lesson.updateOne(
+        {
+          _id: req.params.id,
+        },
+        {
+          $set: {
+            title: req.body.title,
+            loomLink: req.body.loomLink,
+            duration: req.body.duration,
+          },
+        }
+      );
+      if (updatedLesson.acknowledged) {
+        res.status(200).json({
+          message: "update successful",
+        });
+      } else {
+        res.status(404).json({
+          message: "lesson not found",
+        });
+      }
+    } catch (error) {
+      console.error("error updating lesson", error);
+    }
+  }
+
   async deleteLesson(req: Request, res: Response) {
     try {
       const lesson = await Lesson.findOne({ _id: req.params.id });
@@ -175,6 +203,23 @@ class CourseController {
         const imageKey = lesson.content.key;
         await deleteObject(imageKey);
       }
+      const response = await Lesson.deleteOne({ _id: req.params.id });
+      if (response.deletedCount > 0) {
+        res.status(200).json({
+          message: "lesson deleted",
+        });
+      } else {
+        res.status(404).json({
+          message: "lesson not found",
+        });
+      }
+    } catch (error) {
+      console.error("error deleting lesson", error);
+    }
+  }
+
+  async deleteLoomLesson(req: Request, res: Response) {
+    try {
       const response = await Lesson.deleteOne({ _id: req.params.id });
       if (response.deletedCount > 0) {
         res.status(200).json({

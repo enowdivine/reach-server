@@ -12,7 +12,9 @@ router.get("/lesson/:id", lesson.lesson);
 router.get("/lessons/:chapId", lesson.lessons);
 
 router.put("/update-lesson/:id", upload.single("lessonVideo"), lesson.update);
+router.put("/update-loom-lesson/:id", lesson.updateLoomLesson);
 
 router.delete("/delete-lesson/:id", lesson.deleteLesson);
+router.delete("/delete-loom-lesson/:id", lesson.deleteLoomLesson);
 
 export default router;
