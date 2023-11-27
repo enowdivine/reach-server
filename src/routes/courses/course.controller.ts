@@ -166,6 +166,7 @@ class CourseController {
           const imageKey = course.coverImage.key;
           const response = await deleteObject(imageKey);
         }
+        const slug = slugify(req.body.title);
         const updatedCourse = await Course.updateOne(
           {
             _id: req.params.id,
@@ -173,6 +174,7 @@ class CourseController {
           {
             $set: {
               title: req.body.title,
+              slug: slug,
               introVideoUrl: req.body.introVideoUrl,
               desc: req.body.desc,
               category: req.body.category,
@@ -195,6 +197,7 @@ class CourseController {
           });
         }
       } else {
+        const slug = slugify(req.body.title);
         const course = await Course.updateOne(
           {
             _id: req.params.id,
@@ -202,6 +205,7 @@ class CourseController {
           {
             $set: {
               title: req.body.title,
+              slug: slug,
               introVideoUrl: req.body.introVideoUrl,
               desc: req.body.desc,
               category: req.body.category,
