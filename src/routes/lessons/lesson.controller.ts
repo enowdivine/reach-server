@@ -177,8 +177,8 @@ class CourseController {
         {
           $set: {
             title: req.body.title,
-            loomLink: req.body.loomLink,
             duration: req.body.duration,
+            loomLink: req.body.loomLink,
           },
         }
       );
