@@ -116,8 +116,10 @@ class ChapterController {
                 ? approveRequest(user?.username as string, req.body.status)
                 : rejectRequest(user?.username as string, req.body.status),
           });
+          const updated = await Withdraw.findOne({ _id: req.params.id });
           return res.status(200).json({
             message: "request status updated",
+            updated,
           });
         });
       } else {
