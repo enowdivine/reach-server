@@ -8,6 +8,7 @@ import instructorModel from "../instructor/instructor.model";
 import sendEmail from "../../services/email/sendEmail";
 import { courseApproval, courseSuspended } from "./templates/emails";
 import slugify from "../../helpers/slugify";
+import mongoose, { PipelineStage } from "mongoose";
 
 interface MulterRequest extends Request {
   file: any;
@@ -368,6 +369,38 @@ class CourseController {
           },
         ],
       });
+      if (courses) {
+        res.status(200).json(courses);
+      } else {
+        res.status(404).json({
+          message: "No Course Found",
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async advancedSearch(req: Request, res: Response) {
+    try {
+      const searchPhrase = req.params.data;
+
+      const agg: any[] = [
+        {
+          $search: {
+            index: "searchCourses",
+            text: {
+              query: searchPhrase,
+              path: {
+                wildcard: "*",
+              },
+              fuzzy: {},
+            },
+          },
+        },
+      ];
+
+      const courses = await Course.aggregate(agg);
       if (courses) {
         res.status(200).json(courses);
       } else {

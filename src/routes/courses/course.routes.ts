@@ -20,5 +20,6 @@ router.delete("/delete-course/:id", course.deleteCourse);
 
 // search course
 router.get("/search/:data", course.searchCourse);
+router.get("/fuzzy-search/:data", course.advancedSearch);
 
 export default router;
