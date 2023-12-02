@@ -82,7 +82,7 @@ class UserController {
           subject: "Deonicode: Welcome",
           message: welcomeEmail(decodedToken.username as string),
         });
-        res.redirect(200, `${process.env.FRONTEND_URL}`);
+        res.redirect(301, `${process.env.FRONTEND_URL}`);
         // res.status(200).json({
         //   message: "enail verification successfull.",
         // });
