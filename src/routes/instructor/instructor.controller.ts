@@ -217,11 +217,8 @@ class InstructorController {
       },
       {
         $set: {
-          facebook: req.body.facebook,
           twitter: req.body.twitter,
           linkedIn: req.body.linkedIn,
-          instagram: req.body.instagram,
-          youtube: req.body.youtube,
         },
       }
     );

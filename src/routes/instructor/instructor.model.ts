@@ -63,23 +63,11 @@ const instructor = new mongoose.Schema(
       default: 0,
     },
     // socials
-    facebook: {
-      type: String,
-      default: "",
-    },
     twitter: {
       type: String,
       default: "",
     },
     linkedIn: {
-      type: String,
-      default: "",
-    },
-    instagram: {
-      type: String,
-      default: "",
-    },
-    youtube: {
       type: String,
       default: "",
     },
