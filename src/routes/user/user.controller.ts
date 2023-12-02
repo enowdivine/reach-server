@@ -83,9 +83,6 @@ class UserController {
           message: welcomeEmail(decodedToken.username as string),
         });
         res.redirect(301, `${process.env.FRONTEND_URL}`);
-        // res.status(200).json({
-        //   message: "enail verification successfull.",
-        // });
       } else {
         res.status(500).json({
           message: "email verification failed",
