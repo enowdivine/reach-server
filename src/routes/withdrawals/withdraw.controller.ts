@@ -100,27 +100,33 @@ class ChapterController {
       if (request) {
         request.status = req.body.status;
         await request.save().then(async (response) => {
-          if (req.body.status === "approved") {
-            instructorModel.updateOne(
-              { _id: response.userId },
-              { $inc: { totalRevenue: -!response.amount } }
-            );
-          }
-
           const user = await instructorModel.findOne({ _id: response.userId });
-          sendEmail({
-            to: user?.email as string,
-            subject: `Withdrawal Request ${req.body.status}`,
-            message:
-              req.body.status === "approved"
-                ? approveRequest(user?.username as string, req.body.status)
-                : rejectRequest(user?.username as string, req.body.status),
-          });
-          const updated = await Withdraw.findOne({ _id: req.params.id });
-          return res.status(200).json({
-            message: "request status updated",
-            updated,
-          });
+
+          if (user && response.amount) {
+            if (req.body.status === "approved") {
+              let revenue = user.totalRevenue;
+              let revenueBalance = revenue - response.amount;
+              console.log(revenueBalance);
+              instructorModel.updateOne(
+                { _id: response.userId },
+                { $inc: { totalRevenue: revenueBalance } }
+              );
+            }
+
+            sendEmail({
+              to: user?.email as string,
+              subject: `Withdrawal Request ${req.body.status}`,
+              message:
+                req.body.status === "approved"
+                  ? approveRequest(user?.username as string, req.body.status)
+                  : rejectRequest(user?.username as string, req.body.status),
+            });
+            const updated = await Withdraw.findOne({ _id: req.params.id });
+            return res.status(200).json({
+              message: "request status updated",
+              updated,
+            });
+          }
         });
       } else {
         return res.status(404).json({
