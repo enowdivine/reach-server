@@ -106,10 +106,9 @@ class ChapterController {
             if (req.body.status === "approved") {
               let revenue = user.totalRevenue;
               let revenueBalance = revenue - response.amount;
-              console.log(revenueBalance);
-              instructorModel.updateOne(
+              const res = await instructorModel.updateOne(
                 { _id: response.userId },
-                { $inc: { totalRevenue: revenueBalance } }
+                { $set: { totalRevenue: revenueBalance } }
               );
             }
 
