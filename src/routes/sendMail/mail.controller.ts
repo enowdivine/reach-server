@@ -127,6 +127,25 @@ class MailController {
           });
         }
       }
+      if (targetAudience === "subscribers") {
+        const subscribers = await Subscription.find({});
+        if (subscribers.length > 0) {
+          subscribers.map((item) => {
+            return sendEmail({
+              to: item.email as string,
+              subject: req.body.subject,
+              message: generalMail(item.username as string, req.body.message),
+            });
+          });
+          res.status(200).json({
+            message: "Mails sent successfully",
+          });
+        } else {
+          res.status(400).json({
+            message: "error sending mails",
+          });
+        }
+      }
       if (targetAudience === "everyone") {
         const instructors = await instructorModel.find({});
         const users = await userModel.find({});
