@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import Rating from "./rating.model";
-import courseModel from "../courses/course.model";
+// import courseModel from "../courses/course.model";
 
 class RatingController {
   async create(req: Request, res: Response) {
@@ -27,21 +27,21 @@ class RatingController {
             const newRate =
               Math.round((count / courseRatings.length) * 10) / 10;
             // course update
-            const course = await courseModel.updateOne(
-              {
-                _id: req.body.courseId,
-              },
-              {
-                $set: {
-                  rating: newRate,
-                },
-              }
-            );
-            if (course.acknowledged) {
-              res.status(201).json({
-                message: "Thank you for rating this course",
-              });
-            }
+            // const course = await courseModel.updateOne(
+            //   {
+            //     _id: req.body.courseId,
+            //   },
+            //   {
+            //     $set: {
+            //       rating: newRate,
+            //     },
+            //   }
+            // );
+            // if (course.acknowledged) {
+            //   res.status(201).json({
+            //     message: "Thank you for rating this course",
+            //   });
+            // }
           } else {
             res.status(400).json({
               message: "an error occured",

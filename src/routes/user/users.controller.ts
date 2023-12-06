@@ -2,31 +2,34 @@ import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import _ from "lodash";
-import User from "./user.model";
+import User from "./users.model";
 import sendEmail from "../../services/email/sendEmail";
-import { deleteObject } from "../../middleware/s3/s3";
 import {
   welcomeEmail,
-  emailVerification,
   forgotPasswordEmail,
   accountActivated,
   accountSuspended,
   accountDeactivated,
 } from "./templates/emails";
 
-class UserController {
+class UsersController {
   async register(req: Request, res: Response) {
     try {
-      const user = await User.findOne({ email: req.body.email });
+      const user = await User.findOne({
+        phone: req.body.phone,
+        email: req.body.email,
+      });
       if (user) {
         return res.status(409).json({
-          message: "email already exist",
+          message: "An account with the number already exist",
         });
       }
       const hash = await bcrypt.hash(req.body.password, 10);
       const newUser = new User({
         username: req.body.username,
+        phone: req.body.phone,
         email: req.body.email,
+        location: req.body.location,
         password: hash,
       });
       newUser
@@ -36,15 +39,15 @@ class UserController {
             {
               id: response._id,
               username: response.username,
-              email: response.email,
+              phone: response.phone,
             },
             process.env.JWT_SECRET as string
           );
-          const url = `${process.env.SERVER_URL}/api/${process.env.API_VERSION}/user/verification/${token}`;
+
           sendEmail({
             to: response.email as string,
-            subject: "Deonicode: Email Verification",
-            message: emailVerification(response.username as string, url),
+            subject: "Reach: Welcome Email",
+            message: welcomeEmail(response.username as string),
           });
           res.status(201).json({
             message: "success, check email",
@@ -53,55 +56,19 @@ class UserController {
         })
         .catch((err) => {
           res.status(500).json({
-            message: "error creating user",
+            message: "error creating account",
             error: err,
           });
         });
     } catch (error) {
-      console.error("error in user registration", error);
-    }
-  }
-
-  async verifyEmail(req: Request, res: Response) {
-    try {
-      const decodedToken: any = jwt.verify(
-        req.params.token,
-        process.env.JWT_SECRET as string
-      );
-      const response = await User.updateOne(
-        { _id: decodedToken.id },
-        {
-          $set: {
-            emailConfirmed: true,
-          },
-        }
-      );
-      if (response.acknowledged) {
-        sendEmail({
-          to: decodedToken.email as string,
-          subject: "Deonicode: Welcome",
-          message: welcomeEmail(decodedToken.username as string),
-        });
-        res.redirect(301, `${process.env.FRONTEND_URL}`);
-      } else {
-        res.status(500).json({
-          message: "email verification failed",
-        });
-      }
-    } catch (error) {
-      console.error("error in email verification", error);
+      console.error("an error occured", error);
     }
   }
 
   async login(req: Request, res: Response) {
     try {
-      const user = await User.findOne({ email: req.body.email });
+      const user = await User.findOne({ phone: req.body.phone });
       if (user) {
-        if (user.emailConfirmed === false) {
-          return res.status(401).json({
-            message: "verify email to login",
-          });
-        }
         bcrypt.compare(
           req.body.password,
           user.password!,
@@ -116,7 +83,7 @@ class UserController {
                 {
                   id: user._id,
                   username: user.username,
-                  email: user.email,
+                  phone: user.phone,
                 },
                 process.env.JWT_SECRET as string
               );
@@ -149,10 +116,15 @@ class UserController {
       {
         $set: {
           username: req.body.username,
+          phone: req.body.phone,
           email: req.body.email,
-          bio: req.body.bio,
-          avatar: req.body.avatar,
-          country: req.body.country,
+          description: req.body.description,
+          headline: req.body.headline,
+          yearsofExperience: req.body.yearsofExperience,
+          website: req.body.website,
+          availability: req.body.availability,
+          relocationStatus: req.body.relocationStatus,
+          location: req.body.location,
         },
       }
     );
@@ -177,59 +149,59 @@ class UserController {
     }
   }
 
-  async uploadProfileImage(req: Request, res: Response) {
-    try {
-      const user = await User.findOne({ _id: req.params.id });
-      if (user) {
-        if (user.avatar !== null) {
-          const imageKey = user.avatar.key;
-          await deleteObject(imageKey);
-        }
-      }
-      const multerFiles = JSON.parse(JSON.stringify(req.file));
-      if (multerFiles) {
-        const image = {
-          doc: multerFiles?.location,
-          key: multerFiles?.key,
-        };
-        const user = await User.updateOne(
-          {
-            _id: req.params.id,
-          },
-          {
-            $set: {
-              avatar: image,
-            },
-          }
-        );
-        if (user.acknowledged) {
-          const newuser = await User.findOne({ _id: req.params.id });
-          const token: string = jwt.sign(
-            {
-              id: newuser?._id,
-              username: newuser?.username,
-              email: newuser?.email,
-            },
-            process.env.JWT_SECRET as string
-          );
-          res.status(200).json({
-            message: "update successful",
-            token: token,
-          });
-        } else {
-          res.status(404).json({
-            message: "user not found",
-          });
-        }
-      } else {
-        return res.status(500).json({
-          message: "image upload failed",
-        });
-      }
-    } catch (error) {
-      console.error("error uploading profile image", error);
-    }
-  }
+  // async uploadProfileImage(req: Request, res: Response) {
+  //   try {
+  //     const user = await User.findOne({ _id: req.params.id });
+  //     if (user) {
+  //       if (user.avatar !== null) {
+  //         const imageKey = user.avatar.key;
+  //         await deleteObject(imageKey);
+  //       }
+  //     }
+  //     const multerFiles = JSON.parse(JSON.stringify(req.file));
+  //     if (multerFiles) {
+  //       const image = {
+  //         doc: multerFiles?.location,
+  //         key: multerFiles?.key,
+  //       };
+  //       const user = await User.updateOne(
+  //         {
+  //           _id: req.params.id,
+  //         },
+  //         {
+  //           $set: {
+  //             avatar: image,
+  //           },
+  //         }
+  //       );
+  //       if (user.acknowledged) {
+  //         const newuser = await User.findOne({ _id: req.params.id });
+  //         const token: string = jwt.sign(
+  //           {
+  //             id: newuser?._id,
+  //             username: newuser?.username,
+  //             email: newuser?.email,
+  //           },
+  //           process.env.JWT_SECRET as string
+  //         );
+  //         res.status(200).json({
+  //           message: "update successful",
+  //           token: token,
+  //         });
+  //       } else {
+  //         res.status(404).json({
+  //           message: "user not found",
+  //         });
+  //       }
+  //     } else {
+  //       return res.status(500).json({
+  //         message: "image upload failed",
+  //       });
+  //     }
+  //   } catch (error) {
+  //     console.error("error uploading profile image", error);
+  //   }
+  // }
 
   async updatePassword(req: Request, res: Response) {
     let user = await User.findOne({ _id: req.params.id });
@@ -282,9 +254,7 @@ class UserController {
     try {
       const user = await User.findOne({ _id: req.params.id });
       if (user) {
-        return res.status(200).json({
-          user,
-        });
+        return res.status(200).json(user);
       } else {
         return res.status(404).json({
           message: "user not found",
@@ -299,9 +269,7 @@ class UserController {
     try {
       const users = await User.find().sort({ createdAt: -1 });
       if (users) {
-        return res.status(200).json({
-          users,
-        });
+        return res.status(200).json(users);
       } else {
         return res.status(404).json({
           message: "no user found",
@@ -319,6 +287,7 @@ class UserController {
         const resetToken: string = jwt.sign(
           {
             userId: user._id,
+            phone: user.phone,
             email: user.email,
           },
           process.env.JWT_SECRET as string,
@@ -326,11 +295,10 @@ class UserController {
             expiresIn: "1h",
           }
         );
-        const url = `${process.env.FRONTEND_URL}/new-password/${resetToken}`;
         sendEmail({
           to: user.email as string,
-          subject: "Deonicode: Password Reset",
-          message: forgotPasswordEmail(user.username as string, url),
+          subject: "Reach: Password Reset",
+          message: forgotPasswordEmail(user.username as string),
         });
         return res.status(200).json({
           message: "success, check your inbox",
@@ -392,142 +360,6 @@ class UserController {
     }
   }
 
-  // async addToWishlist(req: Request, res: Response) {
-  //   try {
-  //     const user = await User.findOne({ _id: req.params.id });
-  //     if (user) {
-  //       const itemID = req.body.item._id;
-  //       const userWishlist = user.wishlist;
-  //       const temp = userWishlist.filter((item) => item.id === itemID);
-  //       if (temp.length > 0) {
-  //         return res.status(400).json({
-  //           message: "item already exist in wislist",
-  //         });
-  //       }
-  //       user.wishlist.push(req.body.item);
-  //       user.save().then(() => {
-  //         return res.status(200).json({
-  //           message: "item added to wishlist",
-  //         });
-  //       });
-  //     }
-  //   } catch (error) {
-  //     console.error("error adding item to wishlist", error);
-  //   }
-  // }
-
-  // async viewWishlist(req: Request, res: Response) {
-  //   try {
-  //     const user = await User.findOne({ _id: req.params.id });
-  //     if (user) {
-  //       const wishlist = user.wishlist;
-  //       return res.status(200).json({
-  //         wishlist: wishlist,
-  //       });
-  //     } else {
-  //       return res.status(404).json({
-  //         message: "user not found",
-  //       });
-  //     }
-  //   } catch (error) {
-  //     console.error("error fetching wishlist", error);
-  //   }
-  // }
-
-  // async removeFromWishlist(req: Request, res: Response) {
-  //   try {
-  //     const user = await User.updateOne(
-  //       { _id: req.params.id },
-  //       {
-  //         $pull: {
-  //           wishlist: {
-  //             _id: req.body.item._id,
-  //           },
-  //         },
-  //       }
-  //     );
-  //     if (user.acknowledged) {
-  //       return res.status(200).json({
-  //         message: "item removed from wishlist",
-  //       });
-  //     } else {
-  //       return res.status(404).json({
-  //         message: "item not found",
-  //       });
-  //     }
-  //   } catch (error) {
-  //     console.error("error removing item from wishlist", error);
-  //   }
-  // }
-
-  // async addToCart(req: Request, res: Response) {
-  //   try {
-  //     const user = await User.findOne({ _id: req.params.id });
-  //     if (user) {
-  //       const itemID = req.body.item._id;
-  //       const userCart = user.cart;
-  //       const temp = userCart.filter((item) => item.id === itemID);
-  //       if (temp.length > 0) {
-  //         return res.status(400).json({
-  //           message: "item already exist in cart",
-  //         });
-  //       }
-  //       user.cart.push(req.body.item);
-  //       user.save().then(() => {
-  //         return res.status(200).json({
-  //           message: "item added to cart",
-  //         });
-  //       });
-  //     }
-  //   } catch (error) {
-  //     console.error("error adding item to cart", error);
-  //   }
-  // }
-
-  // async removeFromCart(req: Request, res: Response) {
-  //   try {
-  //     const user = await User.updateOne(
-  //       { _id: req.params.id },
-  //       {
-  //         $pull: {
-  //           cart: {
-  //             _id: req.body.item._id,
-  //           },
-  //         },
-  //       }
-  //     );
-  //     if (user.acknowledged) {
-  //       return res.status(200).json({
-  //         message: "item removed from cart",
-  //       });
-  //     } else {
-  //       return res.status(404).json({
-  //         message: "item not found",
-  //       });
-  //     }
-  //   } catch (error) {
-  //     console.error("error removing item from cart", error);
-  //   }
-  // }
-
-  // async viewCart(req: Request, res: Response) {
-  //   try {
-  //     const user = await User.findOne({ _id: req.params.id });
-  //     if (user) {
-  //       const cart = user.cart;
-  //       return res.status(200).json({
-  //         cart: cart,
-  //       });
-  //     } else {
-  //       return res.status(404).json({
-  //         message: "user not found",
-  //       });
-  //     }
-  //   } catch (error) {
-  //     console.error("error fetching cart", error);
-  //   }
-  // }
-
   async updateStatus(req: Request, res: Response) {
     try {
       const user = await User.findOne({ _id: req.params.id });
@@ -576,4 +408,4 @@ class UserController {
   }
 }
 
-export default UserController;
+export default UsersController;

@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import MailTemplate from "./mail.model";
 import Subscription from "./subscribe.model";
 import instructorModel from "../instructor/instructor.model";
-import userModel from "../user/user.model";
+import userModel from "../user/users.model";
 import sendEmail from "../../services/email/sendEmail";
 import { generalMail, contactMail } from "./templates/mails";
 
